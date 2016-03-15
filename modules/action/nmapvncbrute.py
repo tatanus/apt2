@@ -34,6 +34,5 @@ class nmapvncbrute(actionModule):
                 scan_results = n.run(target=t, flags="--script=vnc-brute", ports="5800,5900", vector=self.vector,
                                      filetag=t + "_VNCBRUTE")['scan']
 
-                # TODO
-                # parse output
+                # TODO - process results
         return

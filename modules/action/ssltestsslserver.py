@@ -37,7 +37,7 @@ class ssltestsslserver(actionModule):
                     command = "java -jar " + self.config["miscDir"] + "TestSSLServer.jar " + t + " " + port
                     result = Utils.execWait(command, temp_file, timeout=30)
 
-                    # TODO
+                    # TODO - parse output and store results?
                     # print result
 
         return

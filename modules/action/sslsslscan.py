@@ -77,7 +77,7 @@ class sslsslscan(actionModule):
                                 if int(m.group(1).strip()) < 2048:
                                     keystrength = m.group(1).strip()
 
-                    # TODO
+                    # TODO - store data into KB?
                     # improve the output
                     self.display.debug(t + "," + str(port) + "," + ' '.join(depricatedlist) + "," + ' '.join(
                         weakciphers) + "," + keystrength)

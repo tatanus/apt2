@@ -42,7 +42,7 @@ class msf_gathersessioninfo(actionModule):
                         msf.execute("getuid\n")
                         msf.execute("background\n")
 
-                        # TODO
+                        # TODO - process results and store dat to KB
                         outfile = self.config["proofsDir"] + self.shortName + "_GetUid_" + t + "_" + Utils.getRandStr(
                             10)
                         text = msf.getResult()
@@ -52,7 +52,7 @@ class msf_gathersessioninfo(actionModule):
                         msf.execute("sysinfo\n")
                         msf.execute("background\n")
 
-                        # TODO
+                        # TODO - process results and store dat to KB
                         outfile = self.config["proofsDir"] + self.shortName + "_SysInfo_" + t + "_" + Utils.getRandStr(
                             10)
                         text = msf.getResult()

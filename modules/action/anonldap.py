@@ -36,6 +36,5 @@ class anonldap(actionModule):
                 command = "ldapsearch -h " + t + " -p 389 -x -s base"
                 result = Utils.execWait(command, temp_file)
 
-                # TODO
-                # print result
+                # TODO - Parse output and do stuff
         return

@@ -41,17 +41,16 @@ class msf_smbuserenum(actionModule):
                     msf.execute("run\n")
                     msf.sleep(int(self.config['msfexploitdelay']))
 
-                    # TODO
+                    # TODO - process results and store user list to KB
+                    # need to do something better with this.
+                    #    loop over each user and store in the KB
+                    #        if local, store in "/host/" + t + "/user/" + user
+                    #        if domain, store in "/domain/" + domainname + "/user/" + user
+
                     # for now, just print out the results
                     outfile = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)
                     text = msf.getResult()
                     Utils.writeFile(text, outfile)
-
-                    # need to do something better with this.
-                    #    store the output to a file
-                    #    loop over each user and store in the KB
-                    #        if local, store in "/host/" + t + "/user/" + user
-                    #        if domain, store in "/domain/" + domainname + "/user/" + user
 
             # clean up after ourselves
             result = msf.cleanup()

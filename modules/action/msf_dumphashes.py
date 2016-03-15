@@ -42,7 +42,7 @@ class msf_dumphashes(actionModule):
                         msf.execute("hashdump\n")
                         msf.execute("background\n")
 
-                        # TODO
+                        # TODO - process results and store results in KB
                         outfile = self.config["proofsDir"] + self.shortName + "_HashDump_" + t + "_" + Utils.getRandStr(
                             10)
                         text = msf.getResult()
@@ -53,7 +53,7 @@ class msf_dumphashes(actionModule):
                         msf.execute("wdigest\n")
                         msf.execute("background\n")
 
-                        # TODO
+                        # TODO - process results and store results in KB
                         outfile = self.config["proofsDir"] + self.shortName + "_Mimikatz_" + t + "_" + Utils.getRandStr(
                             10)
                         text = msf.getResult()

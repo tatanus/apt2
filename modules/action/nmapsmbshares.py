@@ -34,6 +34,5 @@ class nmapsmbshares(actionModule):
                 scan_results = n.run(target=t, flags="--script=smb-enum-shares", ports="445", vector=self.vector,
                                      filetag=t + "_SMBSHARESCAN")['scan']
 
-                # TODO
-                # parse output
+                # TODO - process results
         return

@@ -39,6 +39,5 @@ class hydrasmbpassword(actionModule):
                         "miscDir"] + "passwords```.txt smb://" + t
                     result = Utils.execWait(command, temp_file, timeout=30)
 
-                    # TODO
-                    # print result
+                    # TODO - process output and store results
         return

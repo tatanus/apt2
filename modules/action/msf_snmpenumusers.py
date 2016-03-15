@@ -52,8 +52,7 @@ class msf_snmpenumusers(actionModule):
                         outfile = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)
                         Utils.writeFile(result, outfile)
 
-                        # TODO: Find success examples to determine positive response
-                        # TODO: Extract usernames from results and add to KB
+                        # Extract usernames from results and add to KB
                         parts = re.findall(".* users: .*", result)
                         for part in parts:
                             userlist = (part.split(':')[2]).split(',')

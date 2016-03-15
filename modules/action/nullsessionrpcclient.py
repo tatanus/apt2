@@ -61,6 +61,6 @@ class nullsessionrpcclient(actionModule):
                     kb.add('host/' + t + '/vuln/nullSession')
                     self.display.error("VULN [NULLSession] Found on [%s]" % t)
 
-                    # TODO - rpcclient srvinfo
+                    # TODO - process rpcclient srvinfo results
                     # parse out put and store any new info and fire any additional triggers
         return

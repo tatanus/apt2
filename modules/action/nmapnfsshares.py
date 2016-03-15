@@ -34,6 +34,5 @@ class nmapnfsshares(actionModule):
                 scan_results = n.run(target=t, flags="--script=nfs-ls,nfs-showmount", ports="2049", vector=self.vector,
                                      filetag=t + "_NFSSHARESCAN")['scan']
 
-                # TODO
-                # parse output
+                # TODO - process results
         return

@@ -57,7 +57,7 @@ class nullsessionsmbclient(actionModule):
                     kb.add('host/' + t + '/vulnm/nullSession')
                     self.display.error("VULN [NULLSession] Found on [%s]" % t)
 
-                    # TODO - smbclient
+                    # TODO - process smbclient results
                     # parse out put and store any new info and fire any additional triggers
                 else:
                     # do nothing
