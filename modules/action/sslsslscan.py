@@ -35,7 +35,7 @@ class sslsslscan(actionModule):
                     temp_file = self.config["proofsDir"] + self.shortName + "_" + t + "_" + str(
                         port) + "_" + Utils.getRandStr(10)
 
-                    command = "sslscan " + t + ":" + port
+                    command = "sslscan --no-color " + t + ":" + port
                     result = Utils.execWait(command, temp_file, timeout=30)
                     depricatedlist = []
                     weakciphers = []
