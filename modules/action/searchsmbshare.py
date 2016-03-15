@@ -53,7 +53,8 @@ class searchsmbshare(actionModule):
                     try:
                         # list the files on each share (recursivity?)
                         Response2 = conn.listPath(Response[i].name, '/', timeout=30)
-                        self.display.debug('    Files on: ' + system_name + '/' + "  Share[", i, "] =", Response[i].name)
+                        self.display.debug('    Files on: ' + system_name + '/' + "  Share[", i, "] =",
+                                           Response[i].name)
                         for i in range(len(Response2)):
                             for pattern in self.filepatterns:
                                 match_list = fnmatch.filter(Response2[i].filename, pattern)

@@ -2,7 +2,6 @@ import ConfigParser
 import fcntl
 import os
 import random
-import signal
 import socket
 import string
 import struct
@@ -10,18 +9,16 @@ import subprocess
 import sys
 import time
 
-from threading import Timer
-
 
 class Utils():
     @staticmethod
     def port_open(ip, port):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        result = sock.connect_ex((ip,int(port)))
+        result = sock.connect_ex((ip, int(port)))
         if result == 0:
-           return True
+            return True
         else:
-           return False
+            return False
 
     @staticmethod
     def to_unicode_str(obj, encoding='utf-8'):
@@ -119,7 +116,7 @@ class Utils():
         timeout_cmd = ""
         if timeout:
             timeout_cmd = "timeout " + str(timeout) + " "
-        
+
         proc = subprocess.Popen(timeout_cmd + cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         result = proc.communicate()[0]
 

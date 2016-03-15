@@ -35,11 +35,11 @@ class httpserverversion(actionModule):
                     outfile = self.config["proofsDir"] + self.shortName + "_" + t + "_" + str(
                         port) + "_" + Utils.getRandStr(10)
                     Utils.writeFile("Identified Server Version of %s : %s\n\nFull Headers:\n%s" % (
-                    t, serverver, self.print_dict(response.getheaders())), outfile)
+                        t, serverver, self.print_dict(response.getheaders())), outfile)
 
             except httplib.BadStatusLine:
                 pass
-            #            except socket.error as e:
+            # except socket.error as e:
             except:
                 pass
 

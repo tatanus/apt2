@@ -3,8 +3,6 @@ import imp
 import os
 import re
 import sys
-import traceback
-import time
 
 # import our libs
 from utils import Utils, Display
@@ -23,7 +21,7 @@ class Framework():
         self.inputModules = {}
         self.actionModules = {}
 
-        self.progName = "SKIDY"
+        self.progName = "APT2"
         self.version = "error"
         self.isRunning = True  # Conditional to check if user wants to quit
 
@@ -58,7 +56,6 @@ class Framework():
         self.kbSaveFile = self.config["proofsDir"] + "KB-" + Utils.getRandStr(10) + ".save"
 
         self.threadcount_thread = None
-
 
     # ==================================================
     # SUPPORT METHODS
@@ -97,7 +94,8 @@ class Framework():
         try:
             pattern = "'(\d+\.\d+\.\d+[^']*)'"
             # Get the VERSION that exists on Github
-            # emote = re.search(pattern, self.request('https://raw.githubusercontent.com/tatanus/automated_pentest/master/VERSION').raw).group(1)
+            # emote = re.search(pattern, self.request(
+            # 'https://raw.githubusercontent.com/tatanus/automated_pentest/master/VERSION').raw).group(1)
             remote = re.search(pattern, open('VERSION_remote').read()).group(1)
             # Get the version that is local
             local = re.search(pattern, open('VERSION').read()).group(1)
@@ -136,20 +134,20 @@ class Framework():
     # ----------------------------
     def displayBanner(self):
         self.display.output()
-        self.display.output( "      dM.    `MMMMMMMb. MMMMMMMMMM      ")
-        self.display.output( "     ,MMb     MM    `Mb /   MM   \      ")
-        self.display.output( "     d'YM.    MM     MM     MM   ____   ")
-        self.display.output( "    ,P `Mb    MM     MM     MM  6MMMMb  ")
-        self.display.output( "    d'  YM.   MM    .M9     MM MM'  `Mb ")
-        self.display.output( "   ,P   `Mb   MMMMMMM9'     MM      ,MM ")
-        self.display.output( "   d'    YM.  MM            MM     ,MM' ")
-        self.display.output( "  ,MMMMMMMMb  MM            MM   ,M'    ")
-        self.display.output( "  d'      YM. MM            MM ,M'      ")
-        self.display.output( "_dM_     _dMM_MM_          _MM_MMMMMMMM ")
+        self.display.output("      dM.    `MMMMMMMb. MMMMMMMMMM      ")
+        self.display.output("     ,MMb     MM    `Mb /   MM   \      ")
+        self.display.output("     d'YM.    MM     MM     MM   ____   ")
+        self.display.output("    ,P `Mb    MM     MM     MM  6MMMMb  ")
+        self.display.output("    d'  YM.   MM    .M9     MM MM'  `Mb ")
+        self.display.output("   ,P   `Mb   MMMMMMM9'     MM      ,MM ")
+        self.display.output("   d'    YM.  MM            MM     ,MM' ")
+        self.display.output("  ,MMMMMMMMb  MM            MM   ,M'    ")
+        self.display.output("  d'      YM. MM            MM ,M'      ")
+        self.display.output("_dM_     _dMM_MM_          _MM_MMMMMMMM ")
         self.display.output()
 
         self.display.output()
-        self.display.output("A Pentest Automation Framework")
+        self.display.output("An Automated Penetration Testing Toolkit")
         self.display.output("Written by: Adam Compton & Austin Lane")
         self.display.output("Verion: %s" % self.version)
         self.display.output()
@@ -173,7 +171,8 @@ class Framework():
             self.display.error("     user     = [%s]" % (self.config['msfuser']))
             self.display.error("     password = [%s]" % (self.config['msfpass']))
             self.display.alert(
-                "If you wish to make use of metasploit modules within Skiddy, please update the config file with the appropiate settings.")
+                "If you wish to make use of metasploit modules within Skiddy, please update the config file with the "
+                "appropiate settings.")
 
         self.display.output()
 
@@ -204,19 +203,6 @@ class Framework():
                                 dest="scan_target",
                                 action='store',
                                 help="initial scan target(s)")
-
-        # ==================================================
-        # Enable Flags
-        # ==================================================
-        #        enablegroup = parser.add_argument_group('enable flags')
-        #        enablegroup.add_argument("--all",
-        #                            dest="enable_all",
-        #                            action='store_true',
-        #                            help="enable ALL flags... same as (XXXXX)")
-        #        enablegroup.add_argument("--test",
-        #                            dest="enable_test",
-        #                            action='store_true',
-        #                            help="enable all flags EXCEPT sending of emails... same as (XXXXX)")
 
         # ==================================================
         # Advanced Flags
@@ -305,7 +291,7 @@ class Framework():
     # Load Initial Events
     # ----------------------------
     def populateInitEvents(self):
-       EventHandler.fire("always:initial") 
+        EventHandler.fire("always:initial")
 
     # ----------------------------
     # look for and load and modules (input/action)
@@ -394,18 +380,6 @@ class Framework():
             print e
             self.display.error('Module \'%s\' disabled.' % (mod_name))
 
-            # exc_type, exc_value, exc_traceback = sys.exc_info()
-            # print "*** print_tb:"
-            # traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
-            # print
-            # print
-            # print "*** print_exception:"
-            # traceback.print_exception(exc_type, exc_value, exc_traceback, limit=2, file=sys.stdout)
-            # print
-            # print
-            print "*** print_exc:"
-            traceback.print_exc()
-
         return module_str
 
     # ----------------------------
@@ -441,8 +415,8 @@ class Framework():
     # ---------------------------- 
     def displayMenu(self):
         if (self.config["bypass_menu"]):
-            #self.config["bypass_menu"] = False  # Only do this once
-            self.runScan()  # Skip first trip through menu and go straight into a scan using whatever arguments were passed
+            self.runScan()  # Skip first trip through menu and go straight into a scan using whatever arguments were
+            # passed
             self.isRunning = False
             return
         self.display.output()
@@ -489,7 +463,7 @@ class Framework():
         # begin main loop
         while not EventHandler.finished():
             EventHandler.processNext(self.display, int(self.config['max_modulethreads']))
-            #kb.save(self.kbSaveFile)
+            # kb.save(self.kbSaveFile)
 
     # ----------------------------
     # Configure NMAP Scan Settings

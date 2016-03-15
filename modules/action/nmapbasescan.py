@@ -52,12 +52,14 @@ class nmapbasescan(actionModule):
                                     kb.add('host/' + host + '/' + proto + 'port', port)
                                     # process services and info
                                     s = scan_results[host][proto][port]
-                                    # print "%s - %i/%s (%s) \"%s %s\" [%s]" % (host, port, proto, s['name'], s['product'], s['version'], s['extrainfo'])
+                                    # print "%s - %i/%s (%s) \"%s %s\" [%s]" % (host, port, proto, s['name'],
+                                    # s['product'], s['version'], s['extrainfo'])
                                     if (s['name'] == 'http') or (s['name'] == 'https'):
                                         self.fire('web')
                                     # check for any scripts and loop over them
                                     if ('script' in scan_results[host][proto][port].keys()):
                                         for script in scan_results[host][proto][port]['script'].keys():
                                             a = 1
-                                            # print "     %s - [[%s]]" % (script, scan_results[host][proto][port]['script'][script])
+                                            # print "     %s - [[%s]]" % (script, scan_results[host][proto][port][
+                                            # 'script'][script])
         return

@@ -42,7 +42,7 @@ class msf_vncnoneauth(actionModule):
                     msf.execute("set RHOSTS %s\n" % t)
                     msf.execute("run\n")
                     result = msf.getResult()
-                    while(re.search(".*execution completed.*", result) is None):
+                    while (re.search(".*execution completed.*", result) is None):
                         result = result + msf.getResult()
 
                     outfile = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)

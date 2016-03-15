@@ -5,7 +5,7 @@ except:
 
 from core.events import EventHandler
 from core.keystore import KeyStore as kb
-from core.utils import Utils, Display
+from core.utils import Utils
 
 
 class mynmap():
@@ -79,7 +79,8 @@ class mynmap():
             lport = list(self.nm[host][proto].keys())
             lport.sort()
             for port in lport:
-                if (self.nm[host][proto][port]["state"] == "open" or self.nm[host][proto][port]["state"] == "open|filtered"):
+                if (self.nm[host][proto][port]["state"] == "open" or self.nm[host][proto][port][
+                    "state"] == "open|filtered"):
                     # fire event for "newPortXXX"
                     kb.add('host/' + host + '/' + proto + 'port/' + str(port))
                     # print  'host/' + host + '/' + proto + 'port/' + str(port)
@@ -96,14 +97,15 @@ class mynmap():
 
         kb.add('service/' + name + '/host/' + host + '/' + proto + 'port/' + str(
             port) + '/product' + product + '/version/' + str(version))
-        # print  'service/' + name + '/host/' + host + '/' + proto + 'port/' + str(port) + '/product' + product + '/version/' + str(version)
+        # print  'service/' + name + '/host/' + host + '/' + proto + 'port/' + str(port) + '/product' + product +
+        # '/version/' + str(version)
         EventHandler.fire("newService" + str(name) + ":" + vector)
         if ("script" in self.nm[host][proto][port]):
             self.processScript(host, port, proto, vector)
         return
 
     def processScript(self, host, port, proto, vector):
-        #print self.nm[host][proto][port]["script"]
+        # print self.nm[host][proto][port]["script"]
         # print
         return
 
@@ -122,7 +124,7 @@ class mynmap():
                 if "State: VULNERABLE" in output:
                     self.fireScriptVulnEvent(script_id, host, vector)
             elif script_id == "smb-security-mode":
-                if "message_signing: disabled" in  output:
+                if "message_signing: disabled" in output:
                     self.fireScriptVulnEvent(script_id, host, vector)
 
     def out(self):

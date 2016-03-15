@@ -30,7 +30,8 @@ class crackPasswordHashJohnTR(actionModule):
                 # add the new IP to the already seen list
                 self.addseentarget(t + h)
                 # get the type of each hash (ntlm, lm, netntlmv2, etc..)
-                # write each hach out to a temp file seperated by type (i.e. one file for all ntlm, one file for all netntlmv2, etc...)
+                # write each hach out to a temp file seperated by type (i.e. one file for all ntlm, one file for all
+                # netntlmv2, etc...)
 
                 # if any hashes were written to files
                 # for each file

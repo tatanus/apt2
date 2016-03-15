@@ -1,7 +1,4 @@
-import re
-
 from core.actionModule import actionModule
-from core.keystore import KeyStore as kb
 from core.utils import Utils
 
 
@@ -24,7 +21,7 @@ class responder(actionModule):
 
         command = "responder -I eth0 -wrf"
         # run for 15 minutes
-        #result = Utils.execWait(command, temp_file, timeout=900)
+        # result = Utils.execWait(command, temp_file, timeout=900)
         result = Utils.execWait(command, temp_file, timeout=60)
 
         # TODO

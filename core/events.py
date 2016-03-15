@@ -2,6 +2,7 @@ import Queue
 import time
 from threading import Thread
 
+
 class ActiveThreadListItem():
     def __init__(self, thread, name):
         self.thread = thread
@@ -12,6 +13,7 @@ class ActiveThreadListItem():
 
     def getName(self):
         return self.name
+
 
 class EventObject():
     def __init__(self, _instance, vector, event):
@@ -87,7 +89,7 @@ class EventHandler(object):
         num = 0
         for t in EventHandler.my_threads:
             if t.getName() == name:
-                num = num+1
+                num = num + 1
         return num
 
     @staticmethod
@@ -138,7 +140,8 @@ class EventHandler(object):
 
             # check to see if the target module is at maxThreads and if so, add it back to the queue
 
-            if _instance and (EventHandler.numActiveThreads(_instance.getShortName()) >= int(_instance.getMaxThreads())):
+            if _instance and (
+                EventHandler.numActiveThreads(_instance.getShortName()) >= int(_instance.getMaxThreads())):
                 EventHandler.fire(event + ":" + vector)
             else:
                 display.verbose("Launching [%s] Vector [%s]" % (_instance.getTitle(), vector))
@@ -147,4 +150,4 @@ class EventHandler(object):
                     thread.setDaemon(True)
                     thread.start()
                     EventHandler.my_threads.append(ActiveThreadListItem(thread, _instance.getShortName()))
-                    #_instance.go(vector)
+                    # _instance.go(vector)

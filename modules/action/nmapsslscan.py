@@ -8,7 +8,9 @@ class nmapsslscan(actionModule):
         super(nmapsslscan, self).__init__(config, display, lock)
         self.title = "NMap SSL Scan"
         self.shortName = "NmapSSLScan"
-        self.description = "execute [nmap --script ssl-ccs-injection,ssl-cert,ssl-date,ssl-dh-params,ssl-enum-ciphers,ssl-google-cert-catalog,ssl-heartbleed,ssl-known-key,ssl-poodle,sslv2] on each target"
+        self.description = "execute [nmap --script ssl-ccs-injection,ssl-cert,ssl-date,ssl-dh-params," \
+                           "ssl-enum-ciphers,ssl-google-cert-catalog,ssl-heartbleed,ssl-known-key,ssl-poodle," \
+                           "sslv2] on each target"
 
         self.requirements = ["nmap"]
         self.triggers = ["newServicessl", "newServicehttps", "newPort443", "newPort8443"]
@@ -33,7 +35,9 @@ class nmapsslscan(actionModule):
                     # run nmap
                     n = mynmap(self.config, self.display)
                     scan_results = n.run(target=t,
-                                         flags="--script ssl-ccs-injection,ssl-cert,ssl-date,ssl-dh-params,ssl-enum-ciphers,ssl-google-cert-catalog,ssl-heartbleed,ssl-known-key,ssl-poodle,sslv2",
+                                         flags="--script ssl-ccs-injection,ssl-cert,ssl-date,ssl-dh-params,"
+                                               "ssl-enum-ciphers,ssl-google-cert-catalog,ssl-heartbleed,"
+                                               "ssl-known-key,ssl-poodle,sslv2",
                                          ports=str(port), vector=self.vector, filetag=t + "_" + str(port) + "_SSLSCAN")[
                         'scan']
         return
