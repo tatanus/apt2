@@ -10,7 +10,6 @@ Modules:
         tools: responder smbrelayx
     crack hashes
         tools: john hashcat
-    ldapsearch -h [target] -x -s base -b ''
     nmap -p23 --script=telnet-brute [targets]
     nmap -sU -p161 --script=snmp-brute [targets]
     xwd -root -screen -silent -display [target]:0 | xwdtopnm | pnmtopng > [target].png
