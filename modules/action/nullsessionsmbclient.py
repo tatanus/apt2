@@ -54,7 +54,9 @@ class nullsessionsmbclient(actionModule):
                 if "Anonymous login successful" in result:
                     # fire a new trigger
                     self.fire("nullSession")
-                    kb.add('host/' + t + '/vulnm/nullSession')
+                    kb.add("host/" + t + "/vuln/nullSession/module/" + self.shortName)
+                    kb.add("host/" + t + "/vuln/nullSession/vector/" + self.vector)
+                    kb.add("host/" + t + "/vuln/nullSession/type/smb")
                     self.display.error("VULN [NULLSession] Found on [%s]" % t)
 
                     # TODO - process smbclient results

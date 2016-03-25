@@ -58,7 +58,9 @@ class nullsessionrpcclient(actionModule):
                     # fire a new trigger
                     self.fire("nullSession")
 
-                    kb.add('host/' + t + '/vuln/nullSession')
+                    kb.add("host/" + t + "/vuln/nullSession/module/" + self.shortName)
+                    kb.add("host/" + t + "/vuln/nullSession/vector/" + self.vector)
+                    kb.add("host/" + t + "/vuln/nullSession/type/rpc")
                     self.display.error("VULN [NULLSession] Found on [%s]" % t)
 
                     # TODO - process rpcclient srvinfo results

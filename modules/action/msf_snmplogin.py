@@ -39,6 +39,7 @@ class msf_snmplogin(actionModule):
                     self.display.verbose(self.shortName + " - Connecting to " + t)
                     msf.execute("use auxiliary/scanner/snmp/snmp_login\n")
                     msf.execute("set RHOSTS %s\n" % t)
+                    msf.execute("set VERSION 2c")
                     msf.execute("run\n")
                     result = msf.getResult()
                     while (re.search(".*execution completed.*", result) is None):
@@ -50,7 +51,14 @@ class msf_snmplogin(actionModule):
                     parts = re.findall(".*LOGIN SUCCESSFUL.*", result)
                     for part in parts:
                         callFire = True
-                        kb.add("host/" + t + "/vuln/snmpCred/" + str(part))
+                        #Add all relevant details
+                        p = part.split()
+                        comString = p[p.index("SUCCESSFUL:") + 1]
+                        kb.add("host/" + t + "/vuln/snmpCred/module/" + self.shortName)
+                        kb.add("host/" + t + "/vuln/snmpCred/vector/" + self.vector)
+                        kb.add("host/" + t + "/vuln/snmpCred/port/161")
+                        kb.add("host/" + t + "/vuln/snmpCred/message/" + str(part))
+                        kb.add("host/" + t + "/vuln/snmpCred/communityString/" + comString)
 
             if callFire:
                 self.fire("snmpCred")

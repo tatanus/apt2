@@ -37,10 +37,8 @@ class msf_snmpenumusers(actionModule):
                     self.addseentarget(t)
                     self.display.verbose(self.shortName + " - Connecting to " + t)
                     # Get list of working community strings for this host
-                    comStrings = kb.get("host/" + t + "/vuln/snmpCred")
-                    for s in comStrings:
-                        p = s.split()
-                        comString = p[p.index("SUCCESSFUL:") + 1]
+                    comStrings = kb.get("host/" + t + "/vuln/snmpCred/communityString")
+                    for comString in comStrings:
                         msf.execute("use auxiliary/scanner/snmp/snmp_enumusers\n")
                         msf.execute("set RHOSTS %s\n" % t)
                         msf.execute("set COMMUNITY %s\n" % comString)
