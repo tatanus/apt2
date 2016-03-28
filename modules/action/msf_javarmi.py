@@ -51,9 +51,7 @@ class msf_javarmi(actionModule):
                     parts = re.findall(".*Meterpreter session.*", result)
                     for part in parts:
                         callFire = True
-                        kb.add('host/' + t + '/vuln/JavaRMI/module/' + self.shortName)
-                        kb.add('host/' + t + '/vuln/JavaRMI/vector/' + self.vector)
-                        kb.add('host/' + t + '/vuln/JavaRMI/port/1099')
+                        self.addVuln(t, "JavaRMI", {"port":"1099"})
 
             if callFire:
                 self.fire("msfSession")

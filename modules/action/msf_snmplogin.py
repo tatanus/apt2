@@ -54,11 +54,7 @@ class msf_snmplogin(actionModule):
                         #Add all relevant details
                         p = part.split()
                         comString = p[p.index("SUCCESSFUL:") + 1]
-                        kb.add("host/" + t + "/vuln/snmpCred/module/" + self.shortName)
-                        kb.add("host/" + t + "/vuln/snmpCred/vector/" + self.vector)
-                        kb.add("host/" + t + "/vuln/snmpCred/port/161")
-                        kb.add("host/" + t + "/vuln/snmpCred/message/" + str(part))
-                        kb.add("host/" + t + "/vuln/snmpCred/communityString/" + comString)
+                        self.addVuln(t, "snmpCred", {"port":"161","message":str(part),"communityString":comString})
 
             if callFire:
                 self.fire("snmpCred")

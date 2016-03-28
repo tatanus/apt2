@@ -51,10 +51,7 @@ class msf_openx11(actionModule):
                     parts = re.findall(".*Open X Server.*", result)
                     for part in parts:
                         callFire = True
-                        kb.add("host/" + t + "/vuln/openX11/module/" + self.shortName)
-                        kb.add("host/" + t + "/vuln/openX11/vector/" + self.vector)
-                        kb.add("host/" + t + "/vuln/openX11/port/6000")
-                        kb.add("host/" + t + "/vuln/openX11/message/" + str(part))
+                        self.addVuln(t, "openX11", {"port":"6000","message":str(part)})
 
             # Nothing to trigger?
             if callFire:
