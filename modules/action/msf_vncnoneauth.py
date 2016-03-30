@@ -29,6 +29,9 @@ class msf_vncnoneauth(actionModule):
             msf = myMsf(host=self.config['msfhost'], port=int(self.config['msfport']), user=self.config['msfuser'],
                         password=self.config['msfpass'])
 
+            if not msf.isAuthenticated():
+                return
+
             # If any results are succesful, this will become true and Fire will be called in the end
             callFire = False
             # loop over each target

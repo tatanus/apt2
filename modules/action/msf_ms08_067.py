@@ -31,6 +31,9 @@ class msf_ms08_067(actionModule):
             msf = myMsf(host=self.config['msfhost'], port=self.config['msfport'], user=self.config['msfuser'],
                         password=self.config['msfpass'])
 
+            if not msf.isAuthenticated():
+                return
+
             # loop over each target
             for t in self.targets:
                 # verify we have not tested this host before
