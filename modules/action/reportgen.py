@@ -253,5 +253,6 @@ class reportgen(actionModule):
         #TODO: Put report in folder, copy CSS and maybe JS files (if we want to make the report fancy)
         outfile = self.config["reportDir"] + self.shortName + "_" + Utils.getRandStr(10) + ".html"
         Utils.writeFile(doc.getvalue(), outfile)
+        self.display.alert("Report file located at %s" % outfile)
 
         return
