@@ -53,6 +53,7 @@ class searchftp(actionModule):
         outfile = self.config["proofsDir"] + self.shortName + "_PCAP_Port" + str(
             port) + "_" + target + "_" + Utils.getRandStr(10)
         Utils.writeFile(self.getPktCap(cap), outfile)
+        kb.add("host/" + target + "/files/" + self.shortName + "/" + outfile.replace("/","%2F"))
         return success
 
     def testTarget(self, host, port):

@@ -44,17 +44,17 @@ class nullsessionsmbclient(actionModule):
                         self.display.debug("found ip [%s] is on the workgroup/domain [%s]" % (t, workgroup))
 
                 # make outfile
-                temp_file = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)
+                outfile = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)
 
                 # run rpcclient
                 command = "smbclient -N -W " + workgroup + " -L " + t
-                result = Utils.execWait(command, temp_file)
+                result = Utils.execWait(command, outfile)
 
                 # check to see if it worked
                 if "Anonymous login successful" in result:
                     # fire a new trigger
                     self.fire("nullSession")
-                    self.addVuln(t,"nullSession",{"type":"smb"})
+                    self.addVuln(t,"nullSession",{"type":"smb","output":outfile.replace("/","%2F")})
                     self.display.error("VULN [NULLSession] Found on [%s]" % t)
 
                     # TODO - process smbclient results

@@ -53,6 +53,7 @@ class msf_ms08_067(actionModule):
                     outfile = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)
                     result = msf.getResult()
                     Utils.writeFile(result, outfile)
+                    kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/","%2F"))
 
                     parts = re.findall(".*Meterpreter session (\d+) opened.*", result)
                     for part in parts:

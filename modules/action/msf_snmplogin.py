@@ -54,7 +54,7 @@ class msf_snmplogin(actionModule):
                         #Add all relevant details
                         p = part.split()
                         comString = p[p.index("SUCCESSFUL:") + 1]
-                        self.addVuln(t, "snmpCred", {"port":"161","message":str(part),"communityString":comString})
+                        self.addVuln(t, "snmpCred", {"port":"161","message":str(part),"communityString":comString,"output":outfile.replace("/","%2F")})
 
             if callFire:
                 self.fire("snmpCred")

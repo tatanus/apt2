@@ -47,6 +47,7 @@ class msf_dumphashes(actionModule):
                             10)
                         text = msf.getResult()
                         Utils.writeFile(text, outfile)
+                        kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/","%2F"))
 
                         msf.execute("sessions -i " + str(s) + "\n")
                         msf.execute("load mimikatz\n")
@@ -58,6 +59,7 @@ class msf_dumphashes(actionModule):
                             10)
                         text = msf.getResult()
                         Utils.writeFile(text, outfile)
+                        kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/","%2F"))
 
             # clean up after ourselves
             result = msf.cleanup()

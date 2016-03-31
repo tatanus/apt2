@@ -51,7 +51,7 @@ class msf_openx11(actionModule):
                     parts = re.findall(".*Open X Server.*", result)
                     for part in parts:
                         callFire = True
-                        self.addVuln(t, "openX11", {"port":"6000","message":str(part)})
+                        self.addVuln(t, "openX11", {"port":"6000","message":str(part),"output":outfile.replace("/","%2F")})
 
             # Nothing to trigger?
             if callFire:
