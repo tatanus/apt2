@@ -128,6 +128,9 @@ class Framework():
         # kill thread count thread
         EventHandler.kill_thread_count_thread()
 
+        # fix prompt
+        os.system("stty echo")
+
         # exit
         sys.exit(0)
 
@@ -173,7 +176,7 @@ class Framework():
             self.display.error("     user     = [%s]" % (self.config['msfuser']))
             self.display.error("     password = [%s]" % (self.config['msfpass']))
             self.display.alert(
-                "If you wish to make use of metasploit modules within Skiddy, please update the config file with the "
+                "If you wish to make use of metasploit modules within APT2, please update the config file with the "
                 "appropiate settings.")
 
         self.display.output()

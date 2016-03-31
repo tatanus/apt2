@@ -32,33 +32,34 @@ class msf_gathersessioninfo(actionModule):
                 msf = myMsf(host=self.config['msfhost'], port=self.config['msfport'], user=self.config['msfuser'],
                             password=self.config['msfpass'])
 
-                # loop over each target
-                for s in sessions:
-                    # verify we have not tested this session before
-                    if not self.seentarget(s):
-                        # add the new IP to the already seen list
-                        self.addseentarget(s)
-                        msf.execute("sessions -i " + str(s) + "\n")
-                        msf.execute("getuid\n")
-                        msf.execute("background\n")
-
-                        # TODO - process results and store dat to KB
-                        outfile = self.config["proofsDir"] + self.shortName + "_GetUid_" + t + "_" + Utils.getRandStr(
-                            10)
-                        text = msf.getResult()
-                        Utils.writeFile(text, outfile)
-                        kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/","%2F"))
-
-                        msf.execute("sessions -i " + str(s) + "\n")
-                        msf.execute("sysinfo\n")
-                        msf.execute("background\n")
-
-                        # TODO - process results and store dat to KB
-                        outfile = self.config["proofsDir"] + self.shortName + "_SysInfo_" + t + "_" + Utils.getRandStr(
-                            10)
-                        text = msf.getResult()
-                        Utils.writeFile(text, outfile)
-                        kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/","%2F"))
+                if msf.isAuthenticated():
+                    # loop over each target
+                    for s in sessions:
+                        # verify we have not tested this session before
+                        if not self.seentarget(s):
+                            # add the new IP to the already seen list
+                            self.addseentarget(s)
+                            msf.execute("sessions -i " + str(s) + "\n")
+                            msf.execute("getuid\n")
+                            msf.execute("background\n")
+    
+                            # TODO - process results and store dat to KB
+                            outfile = self.config["proofsDir"] + self.shortName + "_GetUid_" + t + "_" + Utils.getRandStr(
+                                10)
+                            text = msf.getResult()
+                            Utils.writeFile(text, outfile)
+                            kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/","%2F"))
+    
+                            msf.execute("sessions -i " + str(s) + "\n")
+                            msf.execute("sysinfo\n")
+                            msf.execute("background\n")
+    
+                            # TODO - process results and store dat to KB
+                            outfile = self.config["proofsDir"] + self.shortName + "_SysInfo_" + t + "_" + Utils.getRandStr(
+                                10)
+                            text = msf.getResult()
+                            Utils.writeFile(text, outfile)
+                            kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/","%2F"))
 
             # clean up after ourselves
             result = msf.cleanup()

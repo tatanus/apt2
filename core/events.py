@@ -114,7 +114,9 @@ class EventHandler(object):
     @staticmethod
     def print_thread_count(display, delay=5):
         EventHandler.ActiveThreadCountThread = True
-        while (EventHandler.ActiveThreadCountThread and len(EventHandler.my_threads) > 0):
+        while (EventHandler.ActiveThreadCountThread):
+            while (EventHandler.ActiveThreadCountThread and len(EventHandler.my_threads) == 0):
+                time.sleep(delay)
             display.alert("Current # of Active Threads = [%i]" % len(EventHandler.my_threads))
             tmp_list = ""
             for t in EventHandler.my_threads:
