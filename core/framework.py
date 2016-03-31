@@ -126,6 +126,9 @@ class Framework():
         # kill thread count thread
         EventHandler.kill_thread_count_thread()
 
+        # fix prompt
+        os.system("stty echo")
+
         # exit
         sys.exit(0)
 
