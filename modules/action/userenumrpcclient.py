@@ -23,7 +23,7 @@ class userenumrpcclient(actionModule):
 
     def chunk(self, l, n):
         for i in range(0, len(l), n):
-            yield l[i:i+n]
+            yield l[i:i + n]
 
     def sids2names(self, ip, sid, start, stop):
         rid_accounts = []
@@ -83,7 +83,7 @@ class userenumrpcclient(actionModule):
                 # check to see if it worked
                 if any(x in result for x in ["NT_STATUS_LOGON_FAILURE", "NT_STATUS_ACCESS_DENIED"]):
                     rid_start = 500
-                    rid_stop =  10000
+                    rid_stop = 10000
                     sid = False
                     # pull the domain via lsaenum
                     result2 = Utils.execWait('rpcclient -U "" %s -N -c "lsaquery"' % t, None)

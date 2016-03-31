@@ -143,7 +143,7 @@ class EventHandler(object):
             # check to see if the target module is at maxThreads and if so, add it back to the queue
 
             if _instance and (
-                EventHandler.numActiveThreads(_instance.getShortName()) >= int(_instance.getMaxThreads())):
+                        EventHandler.numActiveThreads(_instance.getShortName()) >= int(_instance.getMaxThreads())):
                 EventHandler.fire(event + ":" + vector)
             else:
                 display.verbose("Launching [%s] Vector [%s]" % (_instance.getTitle(), vector))

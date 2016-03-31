@@ -57,7 +57,7 @@ class nullsessionrpcclient(actionModule):
                 else:
                     # fire a new trigger
                     self.fire("nullSession")
-                    self.addVuln(t, "nullSession",{"type":"rpc","output":outfile.replace("/","%2F")})
+                    self.addVuln(t, "nullSession", {"type": "rpc", "output": outfile.replace("/", "%2F")})
                     self.display.error("VULN [NULLSession] Found on [%s]" % t)
 
                     # TODO - process rpcclient srvinfo results

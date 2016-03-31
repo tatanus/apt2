@@ -46,7 +46,7 @@ class anonftp(actionModule):
                     if ("Login successful" in result):
                         # fire a new trigger
                         self.fire("anonymousFtp")
-                        self.addVuln(host, "anonymousFTP", {"port":str(port),"output":outfile.replace("/","%2F")})
+                        self.addVuln(host, "anonymousFTP", {"port": str(port), "output": outfile.replace("/", "%2F")})
                         self.display.error("VULN [AnonymousFTP] Found on [%s]" % host)
                     else:
                         self.display.verbose("Could not login as anonymous to FTP at " + host)

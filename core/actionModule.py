@@ -113,7 +113,7 @@ class actionModule(object):
     def getHostnames(self, host):
         return kb.get('host/' + host + '/user/')
 
-    def addVuln(self, host, vuln, details = {}):
+    def addVuln(self, host, vuln, details={}):
         kb.add("host/" + host + "/vuln/" + vuln + "/module/" + self.shortName)
         kb.add("host/" + host + "/vuln/" + vuln + "/vector/" + self.vector)
         for key in details:

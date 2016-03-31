@@ -55,7 +55,7 @@ class msf_javarmi(actionModule):
                     parts = re.findall(".*Meterpreter session.*", result)
                     for part in parts:
                         callFire = True
-                        self.addVuln(t, "JavaRMI", {"port":"1099","output":outfile.replace("/","%2F")})
+                        self.addVuln(t, "JavaRMI", {"port": "1099", "output": outfile.replace("/", "%2F")})
 
             if callFire:
                 self.fire("msfSession")

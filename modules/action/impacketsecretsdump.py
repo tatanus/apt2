@@ -1,5 +1,3 @@
-import re
-
 from core.actionModule import actionModule
 from core.keystore import KeyStore as kb
 from core.utils import Utils
@@ -40,10 +38,13 @@ class impacketsecretsdump(actionModule):
                         self.display.verbose(self.shortName + " - Connecting to " + t)
 
                         # make outfile
-                        temp_file = self.config["proofsDir"] + self.shortName + "_" + t + "_" + user + "_" + Utils.getRandStr(10)
+                        temp_file = self.config[
+                                        "proofsDir"] + self.shortName + "_" + t + "_" + user + "_" + Utils.getRandStr(
+                            10)
 
                         # run secretesdump.py
-                        command = "secretsdump.py -outputfile " + temp_file + " \"" + user + "\":\"" + password + "\"@" + t
+                        command = "secretsdump.py -outputfile " + temp_file + " \"" + user + "\":\"" + password + \
+                                  "\"@" + t
                         result = Utils.execWait(command, None)
 
                         # TODO

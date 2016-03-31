@@ -36,7 +36,7 @@ class httpserverversion(actionModule):
                         port) + "_" + Utils.getRandStr(10)
                     Utils.writeFile("Identified Server Version of %s : %s\n\nFull Headers:\n%s" % (
                         t, serverver, self.print_dict(response.getheaders())), outfile)
-                    kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/","%2F"))
+                    kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/", "%2F"))
 
             except httplib.BadStatusLine:
                 pass
