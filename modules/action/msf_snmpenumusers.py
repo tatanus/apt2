@@ -37,10 +37,8 @@ class msf_snmpenumusers(actionModule):
                     self.addseentarget(t)
                     self.display.verbose(self.shortName + " - Connecting to " + t)
                     # Get list of working community strings for this host
-                    comStrings = kb.get("host/" + t + "/vuln/snmpCred")
-                    for s in comStrings:
-                        p = s.split()
-                        comString = p[p.index("SUCCESSFUL:") + 1]
+                    comStrings = kb.get("host/" + t + "/vuln/snmpCred/communityString")
+                    for comString in comStrings:
                         msf.execute("use auxiliary/scanner/snmp/snmp_enumusers\n")
                         msf.execute("set RHOSTS %s\n" % t)
                         msf.execute("set COMMUNITY %s\n" % comString)
@@ -51,6 +49,7 @@ class msf_snmpenumusers(actionModule):
 
                         outfile = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)
                         Utils.writeFile(result, outfile)
+                        kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/","%2F"))
 
                         # Extract usernames from results and add to KB
                         parts = re.findall(".* users: .*", result)

@@ -37,13 +37,16 @@ class anonftp(actionModule):
             try:
                 ftp.connect(host, int(port))
 
+                outfile = self.config["proofsDir"] + self.shortName + "_PCAP_Port" + str(
+                    port) + "_" + host + "_" + Utils.getRandStr(10)
+
                 try:
                     # attempt to login as anonymous
                     result = ftp.login("anonymous", "anon@mo.us")
                     if ("Login successful" in result):
                         # fire a new trigger
                         self.fire("anonymousFtp")
-                        kb.add('host/' + host + '/vuln/anonymousFtp/port/' + str(port))
+                        self.addVuln(host, "anonymousFTP", {"port":str(port),"output":outfile.replace("/","%2F")})
                         self.display.error("VULN [AnonymousFTP] Found on [%s]" % host)
                     else:
                         self.display.verbose("Could not login as anonymous to FTP at " + host)
@@ -54,8 +57,6 @@ class anonftp(actionModule):
                 ftp.close()
 
                 # retrieve pcap results
-                outfile = self.config["proofsDir"] + self.shortName + "_PCAP_Port" + str(
-                    port) + "_" + host + "_" + Utils.getRandStr(10)
                 Utils.writeFile(self.getPktCap(cap), outfile)
             except EOFError as e:
                 self.display.verbose("Could not find FTP server located at " + host + " Port " + str(port))
