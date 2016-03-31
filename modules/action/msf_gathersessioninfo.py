@@ -32,7 +32,7 @@ class msf_gathersessioninfo(actionModule):
                 msf = myMsf(host=self.config['msfhost'], port=self.config['msfport'], user=self.config['msfuser'],
                             password=self.config['msfpass'])
 
-                    if msf.isAuthenticated():
+                if msf.isAuthenticated():
                     # loop over each target
                     for s in sessions:
                         # verify we have not tested this session before
