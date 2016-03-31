@@ -1,4 +1,5 @@
 import re
+
 from core.actionModule import actionModule
 from core.keystore import KeyStore as kb
 from core.mymsf import myMsf
@@ -43,7 +44,7 @@ class msf_smbuserenum(actionModule):
                     msf.execute("use auxiliary/scanner/smb/smb_enumusers\n")
                     msf.execute("set RHOSTS %s\n" % t)
                     msf.execute("run\n")
-                    #msf.sleep(int(self.config['msfexploitdelay']))
+                    # msf.sleep(int(self.config['msfexploitdelay']))
                     result = msf.getResult()
                     while (re.search(".*execution completed.*", result) is None):
                         result = result + msf.getResult()
@@ -55,8 +56,8 @@ class msf_smbuserenum(actionModule):
                     #        if domain, store in "/domain/" + domainname + "/user/" + user
 
                     # for now, just print out the results
-                    #MSF output format:[*] [timestamp] IP DOMAIN [user,users] ( extras)
-                    parts = re.findall(".*" + t.replace(".","\.") + ".*", result)
+                    # MSF output format:[*] [timestamp] IP DOMAIN [user,users] ( extras)
+                    parts = re.findall(".*" + t.replace(".", "\.") + ".*", result)
                     for part in parts:
                         if "RHOSTS" in part:
                             pass
@@ -73,7 +74,7 @@ class msf_smbuserenum(actionModule):
                                 pass
                     outfile = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)
                     Utils.writeFile(result, outfile)
-                    kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/","%2F"))
+                    kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/", "%2F"))
 
             # clean up after ourselves
             result = msf.cleanup()

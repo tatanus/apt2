@@ -42,24 +42,26 @@ class msf_gathersessioninfo(actionModule):
                             msf.execute("sessions -i " + str(s) + "\n")
                             msf.execute("getuid\n")
                             msf.execute("background\n")
-    
+
                             # TODO - process results and store dat to KB
-                            outfile = self.config["proofsDir"] + self.shortName + "_GetUid_" + t + "_" + Utils.getRandStr(
+                            outfile = self.config[
+                                          "proofsDir"] + self.shortName + "_GetUid_" + t + "_" + Utils.getRandStr(
                                 10)
                             text = msf.getResult()
                             Utils.writeFile(text, outfile)
-                            kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/","%2F"))
-    
+                            kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/", "%2F"))
+
                             msf.execute("sessions -i " + str(s) + "\n")
                             msf.execute("sysinfo\n")
                             msf.execute("background\n")
-    
+
                             # TODO - process results and store dat to KB
-                            outfile = self.config["proofsDir"] + self.shortName + "_SysInfo_" + t + "_" + Utils.getRandStr(
+                            outfile = self.config[
+                                          "proofsDir"] + self.shortName + "_SysInfo_" + t + "_" + Utils.getRandStr(
                                 10)
                             text = msf.getResult()
                             Utils.writeFile(text, outfile)
-                            kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/","%2F"))
+                            kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/", "%2F"))
 
             # clean up after ourselves
             result = msf.cleanup()

@@ -38,7 +38,8 @@ class httpoptions(actionModule):
                     for badopt in badoptions:
                         if (allowed.contains(badopt)):
                             self.fire("httpOption" + badopt)
-                            self.addVuln(t, "httpOption" + badopt, {"port":str(port),"output":outfile.replace("/","%2F")})
+                            self.addVuln(t, "httpOption" + badopt,
+                                         {"port": str(port), "output": outfile.replace("/", "%2F")})
                             self.display.error("VULN [httpOption%s] Found on [%s:%i]" % (badopt, host, int(port)))
                     text = "Allowed HTTP Options for %s : %s\n\nFull Headers:\n%s" % (
                         t, allowed, self.print_dict(response.getheaders()))

@@ -473,7 +473,6 @@ class Framework():
             EventHandler.processNext(self.display, int(self.config['max_modulethreads']))
             # kb.save(self.kbSaveFile)
 
-
     # ----------------------------
     # Configure NMAP Scan Settings
     # ----------------------------

@@ -54,7 +54,7 @@ class nullsessionsmbclient(actionModule):
                 if "Anonymous login successful" in result:
                     # fire a new trigger
                     self.fire("nullSession")
-                    self.addVuln(t,"nullSession",{"type":"smb","output":outfile.replace("/","%2F")})
+                    self.addVuln(t, "nullSession", {"type": "smb", "output": outfile.replace("/", "%2F")})
                     self.display.error("VULN [NULLSession] Found on [%s]" % t)
 
                     # TODO - process smbclient results

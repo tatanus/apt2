@@ -52,7 +52,7 @@ class msf_snmpenumshares(actionModule):
 
                         outfile = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)
                         Utils.writeFile(result, outfile)
-                        kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/","%2F"))
+                        kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/", "%2F"))
 
                         #  Don't need to parse out IP, we are running module one IP at a time
                         # Just find lines with  -  and pull out share name

@@ -1,8 +1,8 @@
+import re
+
 from core.actionModule import actionModule
 from core.keystore import KeyStore as kb
 from core.utils import Utils
-
-import re
 
 
 class hydrasmbpassword(actionModule):
@@ -44,9 +44,10 @@ class hydrasmbpassword(actionModule):
                     parts = re.findall(".* login:\s\s*([^\s]*)\s\s*password:\s\s*([^\s]*)", result)
                     for part in parts:
                         self.fire("newSmbPassword")
-                        self.addVuln(t,"guessable password",{"output":temp_file.replace("/","%2F")})
+                        self.addVuln(t, "guessable password", {"output": temp_file.replace("/", "%2F")})
 
-                        self.display.debug("Identified username [" + part[0] + "] with password [" + part[1] + "] on " + t)
+                        self.display.debug(
+                            "Identified username [" + part[0] + "] with password [" + part[1] + "] on " + t)
                         kb.add("host/" + t + "/user/" + part[0].strip() + "/password/" + part[1].strip())
 
         return
