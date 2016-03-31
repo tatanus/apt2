@@ -44,11 +44,11 @@ class nullsessionrpcclient(actionModule):
                         self.display.debug("found ip [%s] is on the workgroup/domain [%s]" % (t, workgroup))
 
                 # make outfile
-                temp_file = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)
+                outfile = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)
 
                 # run rpcclient
                 command = "rpcclient -N -U \"\" -W " + workgroup + " " + t + " -c srvinfo"
-                result = Utils.execWait(command, temp_file)
+                result = Utils.execWait(command, outfile)
 
                 # check to see if it worked
                 if any(x in result for x in ["NT_STATUS_LOGON_FAILURE", "NT_STATUS_ACCESS_DENIED"]):
@@ -57,8 +57,7 @@ class nullsessionrpcclient(actionModule):
                 else:
                     # fire a new trigger
                     self.fire("nullSession")
-
-                    kb.add('host/' + t + '/vuln/nullSession')
+                    self.addVuln(t, "nullSession",{"type":"rpc","output":outfile.replace("/","%2F")})
                     self.display.error("VULN [NULLSession] Found on [%s]" % t)
 
                     # TODO - process rpcclient srvinfo results

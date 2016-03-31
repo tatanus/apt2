@@ -51,12 +51,10 @@ class msf_openx11(actionModule):
                     outfile = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)
                     Utils.writeFile(result, outfile)
 
-                    # Should we store complete output for posterity/debug purposes? Something like:
-                    # kb.add("host/" + t + "/output/openx11/" + result)
                     parts = re.findall(".*Open X Server.*", result)
                     for part in parts:
                         callFire = True
-                        kb.add("host/" + t + "/vuln/openX11/" + str(part))
+                        self.addVuln(t, "openX11", {"port":"6000","message":str(part),"output":outfile.replace("/","%2F")})
 
             # Nothing to trigger?
             if callFire:

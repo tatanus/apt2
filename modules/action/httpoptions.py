@@ -31,20 +31,20 @@ class httpoptions(actionModule):
                 response = conn.getresponse()
                 text = ""
                 allowed = response.getheader('allow')
+                outfile = self.config["proofsDir"] + self.shortName + "_" + t + "_" + str(
+                    port) + "_" + Utils.getRandStr(10)
                 if (allowed):
                     badoptions = ['PUT', 'DELETE', 'TRACE', 'TRACK']
                     for badopt in badoptions:
                         if (allowed.contains(badopt)):
                             self.fire("httpOption" + badopt)
-                            kb.add('host/' + t + '/vuln/httpOption' + badopt + '/port/' + str(port))
+                            self.addVuln(t, "httpOption" + badopt, {"port":str(port),"output":outfile.replace("/","%2F")})
                             self.display.error("VULN [httpOption%s] Found on [%s:%i]" % (badopt, host, int(port)))
                     text = "Allowed HTTP Options for %s : %s\n\nFull Headers:\n%s" % (
                         t, allowed, self.print_dict(response.getheaders()))
                 else:
                     text = "Allowed HTTP Options for %s : OPTIONS VERB NOT ALLOWED\n\nFull Headers:\n%s" % (
                         t, self.print_dict(response.getheaders()))
-                outfile = self.config["proofsDir"] + self.shortName + "_" + t + "_" + str(
-                    port) + "_" + Utils.getRandStr(10)
                 Utils.writeFile(text, outfile)
             except httplib.BadStatusLine:
                 pass

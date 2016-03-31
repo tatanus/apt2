@@ -79,8 +79,7 @@ class mynmap():
             lport = list(self.nm[host][proto].keys())
             lport.sort()
             for port in lport:
-                if (self.nm[host][proto][port]["state"] == "open" or self.nm[host][proto][port][
-                    "state"] == "open|filtered"):
+                if (self.nm[host][proto][port]["state"] == "open"):
                     # fire event for "newPortXXX"
                     kb.add('host/' + host + '/' + proto + 'port/' + str(port))
                     # print  'host/' + host + '/' + proto + 'port/' + str(port)

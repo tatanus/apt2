@@ -57,6 +57,8 @@ class Framework():
 
         self.threadcount_thread = None
 
+        self.allFinished = False
+
     # ==================================================
     # SUPPORT METHODS
     # ==================================================
@@ -68,7 +70,7 @@ class Framework():
         # make directories
         if not os.path.isdir(self.config["outDir"] + "reports/"):
             os.makedirs(self.config["outDir"] + "reports/")
-        self.reportDir = self.config["outDir"] + "reports/"
+        self.config["reportDir"] = self.config["outDir"] + "reports/"
 
         if not os.path.isdir(self.config["outDir"] + "logs/"):
             os.makedirs(self.config["outDir"] + "logs/")
@@ -464,9 +466,13 @@ class Framework():
                    flags="-s" + self.config["scan_type"] + " " + self.config["scan_flags"] + " -iL " + self.config[
                        "scan_target_list"], vector="nmapScan")
         # begin main loop
-        while not EventHandler.finished():
+        while not EventHandler.finished() or not self.allFinished:
+            if (EventHandler.finished() and not self.allFinished):
+                EventHandler.fire("allFinished")
+                self.allFinished = True
             EventHandler.processNext(self.display, int(self.config['max_modulethreads']))
             # kb.save(self.kbSaveFile)
+
 
     # ----------------------------
     # Configure NMAP Scan Settings

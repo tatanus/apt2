@@ -32,7 +32,7 @@ class msf_gathersessioninfo(actionModule):
                 msf = myMsf(host=self.config['msfhost'], port=self.config['msfport'], user=self.config['msfuser'],
                             password=self.config['msfpass'])
 
-                if msf.isAuthenticated():
+                    if msf.isAuthenticated():
                     # loop over each target
                     for s in sessions:
                         # verify we have not tested this session before
@@ -48,6 +48,7 @@ class msf_gathersessioninfo(actionModule):
                                 10)
                             text = msf.getResult()
                             Utils.writeFile(text, outfile)
+                            kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/","%2F"))
     
                             msf.execute("sessions -i " + str(s) + "\n")
                             msf.execute("sysinfo\n")
@@ -58,6 +59,7 @@ class msf_gathersessioninfo(actionModule):
                                 10)
                             text = msf.getResult()
                             Utils.writeFile(text, outfile)
+                            kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/","%2F"))
 
             # clean up after ourselves
             result = msf.cleanup()
