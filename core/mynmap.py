@@ -22,30 +22,21 @@ class mynmap():
         proofsDir = ""
         if "proofsDir" in self.config.keys():
             proofsDir = self.config["proofsDir"]
-        self.outfile = proofsDir + "NMAP-" + filetag + "-" + Utils.getRandStr(10) + ".xml"
+        self.outfile = proofsDir + "NMAP-" + filetag + "-" + Utils.getRandStr(10)
 
-        results = None
-        try:
-            results = self.nm.scan(hosts=target, ports=ports, arguments=flags)
-        except nmap.PortScannerError as e:
-            results = dict()
-            results['scan'] = dict()
-            return results
-
-        file = open(self.outfile, "w")
-        file.write(self.out())
-        file.close()
+        command = "nmap " + flags + " -p " + ports + " -oA " + self.outfile + " " + target
+        tmp_results = Utils.execWait(command)
         self.display.output("Scan file saved to [%s]" % self.outfile)
 
-        self.processIPs(vector)
-        return results
+        return self.loadXMLFile(self.outfile + ".xml", "nmapFile")
 
     def loadXMLFile(self, file, vector=""):
+        results = dict()
         with open(file, "r") as fd:
             content = fd.read()
-            self.nm.analyse_nmap_xml_scan(content)
+            results = self.nm.analyse_nmap_xml_scan(content)
             self.processIPs(vector)
-        return
+        return results
 
     def getOutfile(self):
         return self.outFile
