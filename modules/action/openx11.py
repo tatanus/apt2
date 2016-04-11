@@ -30,12 +30,14 @@ class openx11(actionModule):
                     # add the new IP to the already seen list
                     self.addseentarget(t)
 
-                    outfile = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10) + ".png"
-                    command = "xwd -root -screen -silent -display " + t + ":0 | convert - " + outfile
-                    Utils.execWait(command)
-                    self.addVuln(t, "openX11",
-                             {"port": "6000", "output": outfile.replace("/", "%2F")})
+                    command = "xwd -root -screen -silent -display " + t + ":0"
+                    result = Utils.execWait(command)
+                    if "unable to open display" not in result:
+                        outfile = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10) + ".png"
+                        command = "xwd -root -screen -silent -display " + t + ":0 | convert - " + outfile
+                        self.addVuln(t, "openX11",
+                                {"port": "6000", "output": outfile.replace("/", "%2F")})
 
-                    self.fire("x11Access")
+                        self.fire("x11Access")
 
         return
