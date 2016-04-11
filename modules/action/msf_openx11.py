@@ -59,7 +59,7 @@ class msf_openx11(actionModule):
 
             # Nothing to trigger?
             if callFire:
-                self.Fire("x11Access")
+                self.fire("x11Access")
 
             # clean up after ourselves
             result = msf.cleanup()

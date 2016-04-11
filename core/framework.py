@@ -459,7 +459,7 @@ class Framework():
         if (self.config["scan_target"]):
             nm = mynmap(self.config, self.display)
             nm.run(target=self.config["scan_target"], ports=self.config["scan_port_range"],
-                   flags="-s" + self.config["scan_type"] + " " + self.config["scan_flags"], vector="nmapScan")
+                   flags="-s" + self.config["scan_type"] + " " + self.config["scan_flags"], vector="nmapScan", filetag="nmapScan" + self.config["scan_target"])
         elif (self.config["scan_target_list"]):
             nm = mynmap(self.config, self.display)
             nm.run(target="", ports=self.config["scan_port_range"],
