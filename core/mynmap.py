@@ -94,9 +94,19 @@ class mynmap():
             self.processScript(host, port, proto, vector)
         return
 
+    def addVuln(self, host, vuln, vector, details={}):
+        kb.add("host/" + host + "/vuln/" + vuln + "/module/Nmap")
+        kb.add("host/" + host + "/vuln/" + vuln + "/vector/" + vector)
+        for key in details:
+            kb.add("host/" + host + "/vuln/" + vuln + "/" + key + "/" + details[key])
+
     def processScript(self, host, port, proto, vector):
-        # print self.nm[host][proto][port]["script"]
-        # print
+        for script_id in self.nm[host][proto][port]["script"]:
+            script_value = self.nm[host][proto][port]["script"][script_id]
+            if (script_id == "vnc-brute") and (script_value == "No authentication required"):
+                EventHandler.fire(script_id + ":" + vector)
+                self.addVuln(host, "VNCNoAuth", vector, {"port" : str(port), "message": script_value})
+                self.display.error("VULN [%s] Found on [%s]" % (script_id, host))
         return
 
     def fireScriptVulnEvent(self, script_id, host, vector):
