@@ -1,6 +1,9 @@
 import fnmatch
 
-import ftputil
+try:
+    import ftputil
+except ImportError:
+    raise ImportError('Missing ftputil library. To install run: pip install ftputil')
 
 from core.actionModule import actionModule
 from core.keystore import KeyStore as kb
