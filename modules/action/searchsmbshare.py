@@ -1,6 +1,9 @@
 import fnmatch
 
-from smb.SMBConnection import SMBConnection
+try:
+    from smb.SMBConnection import SMBConnection
+except ImportError:
+    raise ImportError('Missing pysmb library. To install run: pip install pysmb')
 
 from core.actionModule import actionModule
 from core.keystore import KeyStore as kb
