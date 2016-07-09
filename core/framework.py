@@ -150,36 +150,10 @@ class Framework():
         self.display.output("  d'      YM. MM            MM ,M'      ")
         self.display.output("_dM_     _dMM_MM_          _MM_MMMMMMMM ")
         self.display.output()
-
         self.display.output()
         self.display.output("An Automated Penetration Testing Toolkit")
         self.display.output("Written by: Adam Compton & Austin Lane")
         self.display.output("Verion: %s" % self.version)
-        self.display.output()
-        self.display.output("%i : Input Modules Loaded" % len(self.inputModules))
-        self.display.output("%i : Action Modules Loaded" % len(self.actionModules))
-        self.display.output()
-        self.display.alert("The KnowledgeBase will be auto saved to : %s" % self.kbSaveFile)
-        self.display.output()
-        self.display.alert("Local IP is set to : %s" % self.config['lhost'])
-        self.display.alert(
-            "      If you would rather use a different IP, then specify it via the [--ip <ip>] argument.")
-
-        # test to see if we can connect to msfrpc
-        msf = myMsf(host=self.config['msfhost'], port=self.config['msfport'], user=self.config['msfuser'],
-                    password=self.config['msfpass'])
-        if (not msf.isAuthenticated()):
-            self.display.output()
-            self.display.error("Could not connect to Metasploit msgrpc service with the following parameters:")
-            self.display.error("     host     = [%s]" % (self.config['msfhost']))
-            self.display.error("     port     = [%s]" % (self.config['msfport']))
-            self.display.error("     user     = [%s]" % (self.config['msfuser']))
-            self.display.error("     password = [%s]" % (self.config['msfpass']))
-            self.display.alert(
-                "If you wish to make use of metasploit modules within APT2, please update the config file with the "
-                "appropiate settings.")
-
-        self.display.output()
 
     # ----------------------------
     # Parse CommandLine Parms
@@ -212,7 +186,7 @@ class Framework():
         # ==================================================
         # Advanced Flags
         # ==================================================
-        advgroup = parser.add_argument_group('ADVANCED')
+        advgroup = parser.add_argument_group('advanced')
         advgroup.add_argument("--ip",
                               metavar="<local IP>",
                               dest="lhost",
@@ -231,7 +205,7 @@ class Framework():
                             dest="safe_level",
                             action='store',
                             default=4,
-                            help="set min safe level for modules")
+                            help="set min safe level for modules. 0 is unsafe and 5 is very safe. Default is 4")
         parser.add_argument("-b", "--bypassmenu",
                             dest="bypass_menu",
                             action='store_true',
@@ -243,7 +217,7 @@ class Framework():
         miscgroup.add_argument("--listmodules",
                                dest="list_modules",
                                action='store_true',
-                               help="list out all current modules")
+                               help="list out all current modules and exit")
 
         # parse args
         args = parser.parse_args()
@@ -276,7 +250,7 @@ class Framework():
         else:
             # guess not..   so try to load the default one
             if Utils.isReadable("default.cfg"):
-                self.display.error("a CONFIG FILE was not specified...  defaulting to [default.cfg]")
+                self.display.verbose("a CONFIG FILE was not specified...  defaulting to [default.cfg]")
                 temp1 = self.config
                 temp2 = Utils.loadConfig("default.cfg")
                 self.config = dict(temp2.items() + temp1.items())
@@ -302,8 +276,7 @@ class Framework():
     # look for and load and modules (input/action)
     # ----------------------------
     def loadModules(self):
-        module_list = []
-
+        module_dict = {}
         # crawl the module directory and build the module tree
         # process inputs
         path = os.path.join(sys.path[0], 'modules/input')
@@ -313,7 +286,8 @@ class Framework():
             dirnames[:] = [d for d in dirnames if not d[0] == '.']
             if len(filenames) > 0:
                 for filename in [f for f in filenames if (f.endswith('.py') and not f == "__init__.py")]:
-                    module_list.append(self.loadModule("input", dirpath, filename))
+                    module = self.loadModule("input", dirpath, filename)
+                    module_dict[module['name'].rstrip(" ")] = module
         # process actions
         path = os.path.join(sys.path[0], 'modules/action')
         for dirpath, dirnames, filenames in os.walk(path):
@@ -322,15 +296,16 @@ class Framework():
             dirnames[:] = [d for d in dirnames if not d[0] == '.']
             if len(filenames) > 0:
                 for filename in [f for f in filenames if (f.endswith('.py') and not f == "__init__.py")]:
-                    module_list.append(self.loadModule("action", dirpath, filename))
+                    module = self.loadModule("action", dirpath, filename)
+                    module_dict[module['name'].rstrip(" ")] = module
 
-        return module_list
+        return module_dict
 
     # ----------------------------
     # load each module
     # ----------------------------
     def loadModule(self, type, dirpath, filename):
-        module_str = ""
+        module_dict = {}
 
         mod_name = filename.split('.')[0]
         mod_dispname = '/'.join(re.split('/modules/' + type + "/", dirpath)[-1].split('/') + [mod_name])
@@ -347,23 +322,31 @@ class Framework():
 
             valid = True
             for r in _instance.getRequirements():
-                if (not r in self.config):
+                if not r in self.config:
                     path = Utils.validateExecutable(r)
-                    if (path):
+                    if path:
                         self.config[r] = path
                     else:
                         valid = False
-            if (valid):
-                module_str = "%s %s [TYPE = %s] [VALID = TRUE ]" % (
-                    mod_name.ljust(25), _instance.getTitle().ljust(40), type.ljust(6))
+            if valid:
+                module_dict = {'name': mod_name.ljust(25),
+                               'description': _instance.getTitle().ljust(40),
+                               'type': type.ljust(6),
+                               'valid': True}
             else:
-                module_str = "%s %s [TYPE = %s] [VALID = FALSE]" % (
-                    mod_name.ljust(25), _instance.getTitle().ljust(40), type.ljust(6))
+                module_dict = {'name': mod_name.ljust(25),
+                               'description': _instance.getTitle().ljust(40),
+                               'type': type.ljust(6),
+                               'valid': False}
+            if type != 'input':
+                module_dict['safelevel'] = _instance.getSafeLevel()
+            else:
+                module_dict['safelevel'] = None
 
             # add the module to the framework's loaded modules
-            if (valid):
-                if (type == "action"):
-                    if (self.config["safe_level"] > _instance.getSafeLevel()):
+            if valid:
+                if type == "action":
+                    if self.config["safe_level"] > _instance.getSafeLevel():
                         self.display.error(
                             'Module \'%s\' disabled. Safety_level (%i) is below specified requirement (%i)' % (
                                 mod_name, _instance.getSafeLevel(), self.config["safe_level"]))
@@ -371,7 +354,7 @@ class Framework():
                         self.actionModules[mod_dispname] = _instance
                         for t in _instance.getTriggers():
                             EventHandler.add(_instance, t)
-                elif (type == "input"):
+                elif type == "input":
                     self.inputModules[mod_dispname] = _instance
             else:
                 self.display.error(
@@ -385,7 +368,7 @@ class Framework():
             print e
             self.display.error('Module \'%s\' disabled.' % (mod_name))
 
-        return module_str
+        return module_dict
 
     # ----------------------------
     # Attempt to identify the type of input file
@@ -589,6 +572,34 @@ class Framework():
                 except ValueError:
                     self.display.error("%s - Not a valid option" % (search))
 
+    def msfCheck(self):
+        """Test to see if we can connect to the Metasploit msgrpc interface"""
+        msf = myMsf(host=self.config['msfhost'], port=self.config['msfport'], user=self.config['msfuser'],
+                    password=self.config['msfpass'])
+        if not msf.isAuthenticated():
+            self.display.error(
+                "Could not connect to Metasploit msgrpc service with the following parameters:")
+            self.display.error("     host     = [%s]" % (self.config['msfhost']))
+            self.display.error("     port     = [%s]" % (self.config['msfport']))
+            self.display.error("     user     = [%s]" % (self.config['msfuser']))
+            self.display.error("     password = [%s]" % (self.config['msfpass']))
+            self.display.alert(
+                "If you wish to make use of Metasploit modules within APT2, please update the config file with the "
+                "appropiate settings.")
+
+    def modulesLoaded(self):
+        """Print Loaded Module Stats"""
+        self.display.output("Input Modules Loaded:\t%i" % len(self.inputModules))
+        self.display.output("Action Modules Loaded:\t%i" % len(self.actionModules))
+
+    def additionalInfo(self):
+        """Print Additional Information such as knowledge base path and current IP address"""
+        self.display.output()
+        self.display.alert("The KnowledgeBase will be auto saved to : %s" % self.kbSaveFile)
+        self.display.alert("Local IP is set to : %s" % self.config['lhost'])
+        self.display.alert(
+            "      If you would rather use a different IP, then specify it via the [--ip <ip>] argument.")
+
     # ==========================================================================================
     # ==========================================================================================
     # ==========================================================================================
@@ -596,33 +607,33 @@ class Framework():
     # ----------------------------
     # Primary METHOD
     # ----------------------------
+
     def run(self, argv):
-        # load config
+        os.system('clear')
         self.parseParameters(argv)
-        self.loadConfig()
+        self.versionCheck()  #check the local version against the remote version
+        self.displayBanner() #Print banner first and all messages after
+        self.loadConfig() # load config
+        modules_dict = self.loadModules() # load input/action modules
+        self.modulesLoaded()
 
-        # check the local version against the remote version
-        self.versionCheck()
+        if self.config["list_modules"]:
+            self.display.printModuleList(modules_dict)
+            sys.exit()
 
-        # load input/action modules
-        str = self.loadModules()
-
-        # Everything must have loaded properly, so display the banner
-        self.displayBanner()
-        if (self.config["list_modules"]):
-            self.display.print_list("List of Current Modules", str)
-            self.display.output("")
+        self.additionalInfo()
+        self.msfCheck()
 
         # parse inputs
         for input in self.inputs.keys():
             for inputmodule in self.inputModules.keys():
                 _instance = self.inputModules[inputmodule]
-                if (_instance.getType() == input):
+                if _instance.getType() == input:
                     for file in self.inputs[input]:
                         self.display.verbose("Loading [%s] with [%s]" % (file, inputmodule))
                         _instance.go(file)
 
-        # populate any inital events
+        # populate any initial events
         self.populateInitEvents()
 
         # begin menu loop

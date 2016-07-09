@@ -351,6 +351,20 @@ class Display():
         else:
             self.output("None")
 
+    def printModuleList(self, modules):
+        """Print a listing of availialble modules"""
+        self.output("+---------------------------+--------+--------------+-------------------------------------------------------------------------------------------+")
+        self.output("| Module\t\t\t| Type   | Safety Level | Description\t\t\t\t\t\t\t\t\t\t    |")
+        self.output("+---------------------------+--------+--------------+-------------------------------------------------------------------------------------------+")
+        for module in modules:
+            self.output("| %s | %s |      %s\t| %s"
+                        %(modules[module]['name'],
+                          modules[module]['type'],
+                          modules[module]['safelevel'],
+                          modules[module]['description']) +
+                        (" " * (90 - len(modules[module]['description']))) + "|")
+        self.output("+---------------------------+--------+--------------+-------------------------------------------------------------------------------------------+")
+
 # -----------------------------------------------------------------------------
 # main test code
 # -----------------------------------------------------------------------------
