@@ -1,4 +1,3 @@
-import sys
 try:
     import nmap
 except:
@@ -53,17 +52,29 @@ class mynmap():
 
     def processIPs(self, vector):
         for host in self.nm.all_hosts():
-            # print host
-            kb.add('host/' + host)
-            # fire new event for "newHost"
-            EventHandler.fire("newIP" + ":" + vector)
+            good = False
+            for proto in self.nm[host].all_protocols():
+                if (good):
+                    break
+                lport = list(self.nm[host][proto].keys())
+                lport.sort()
+                for port in lport:
+                    if (good):
+                        break
+                    if (self.nm[host][proto][port]["state"] == "open"):
+                        good = True
 
-            # process ports
-            self.processPorts(host, vector)
+            if (good):
+                kb.add('host/' + host)
+                # fire new event for "newHost"
+                EventHandler.fire("newIP" + ":" + vector)
 
-            # process hostscripts
-            if ("hostscript" in self.nm[host]):
-                self.processHostScripts(host, vector)
+                # process ports
+                self.processPorts(host, vector)
+
+                # process hostscripts
+                if ("hostscript" in self.nm[host]):
+                    self.processHostScripts(host, vector)
         return
 
     def processPorts(self, host, vector):
