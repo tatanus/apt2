@@ -609,7 +609,7 @@ class Framework():
     # ----------------------------
 
     def run(self, argv):
-        os.system('clear')
+        #os.system('clear')
         self.parseParameters(argv)
         self.versionCheck()  #check the local version against the remote version
         self.displayBanner() #Print banner first and all messages after
