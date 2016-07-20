@@ -2,22 +2,19 @@ try:
     from yattag import Doc
 except ImportError:
     raise ImportError('Missing Yattag, if you would like to enable report generation do: pip install yattag')
-from core.actionModule import actionModule
+from core.reportModule import reportModule
 from core.keystore import KeyStore as kb
 from core.utils import Utils
 
 
-class reportgen(actionModule):
+class reportgen(reportModule):
     def __init__(self, config, display, lock):
         super(reportgen, self).__init__(config, display, lock)
-        self.title = "Generate Report"
-        self.shortName = "reportGen"
+        self.title = "Generate HTML Report"
+        self.shortName = "reportGenHTML"
         self.description = "Gather scan information and generate HTML report"
 
         self.requirements = []
-        self.triggers = ["allFinished"]
-
-        self.safeLevel = 5
 
     def getTargets(self):
         # we are interested in all hosts
@@ -48,12 +45,12 @@ class reportgen(actionModule):
                 with tag('title'):
                     text('Generated Report')
                 with tag('style'):
-                    text("""div{ width: 100%; } 
-                        html { margin: 0; padding: 10px; } 
+                    text("""div{ width: 100%; }
+                        html { margin: 0; padding: 10px; }
                         body { font: 12px verdana, sans-serif;line-height: 1.88889; background: #CCC; margin: 5%;
                         padding: 0; width: 90%; }
-                        p { margin-top: 5px; text-align: justify; } 
-                        h3 { font: italic normal 1.4em georgia, sans-serif; letter-spacing: 1px; margin-bottom: 0; } 
+                        p { margin-top: 5px; text-align: justify; }
+                        h3 { font: italic normal 1.4em georgia, sans-serif; letter-spacing: 1px; margin-bottom: 0; }
                         div.hostsection{ border-top: 1px solid #555555; min-height: 30px; background: #AAA; padding:
                         0px;}
                         div.hostsection h3{ font: bold; width: 100%; float: left; background: #CCC; }
@@ -68,8 +65,8 @@ class reportgen(actionModule):
                         5px; }
                         .vulndescriptiontitle{ font: bold; width: 100%; float: left; background: #BBB; }
                         .vulndescriptioncontents{}
-                        a:link { font-weight: bold; text-decoration: none; } 
-                        a:visited { font-weight: bold; text-decoration: none; } 
+                        a:link { font-weight: bold; text-decoration: none; }
+                        a:visited { font-weight: bold; text-decoration: none; }
                         a:hover, a:focus, a:active { text-decoration: underline; }""")
             with tag('body'):
                 with tag('div', klass='toc'):

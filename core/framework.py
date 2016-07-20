@@ -20,6 +20,7 @@ class Framework():
 
         self.inputModules = {}
         self.actionModules = {}
+        self.reportModules = {}
 
         self.progName = "APT2"
         self.version = "error"
@@ -298,6 +299,16 @@ class Framework():
                 for filename in [f for f in filenames if (f.endswith('.py') and not f == "__init__.py")]:
                     module = self.loadModule("action", dirpath, filename)
                     module_dict[module['name'].rstrip(" ")] = module
+        # process reports
+        path = os.path.join(sys.path[0], 'modules/report')
+        for dirpath, dirnames, filenames in os.walk(path):
+            # remove hidden files and directories
+            filenames = [f for f in filenames if not f[0] == '.']
+            dirnames[:] = [d for d in dirnames if not d[0] == '.']
+            if len(filenames) > 0:
+                for filename in [f for f in filenames if (f.endswith('.py') and not f == "__init__.py")]:
+                    module = self.loadModule("report", dirpath, filename)
+                    module_dict[module['name'].rstrip(" ")] = module
 
         return module_dict
 
@@ -338,7 +349,7 @@ class Framework():
                                'description': _instance.getTitle().ljust(40),
                                'type': type.ljust(6),
                                'valid': False}
-            if type != 'input':
+            if type == 'action':
                 module_dict['safelevel'] = _instance.getSafeLevel()
             else:
                 module_dict['safelevel'] = None
@@ -356,6 +367,8 @@ class Framework():
                             EventHandler.add(_instance, t)
                 elif type == "input":
                     self.inputModules[mod_dispname] = _instance
+                elif type == "report":
+                    self.reportModules[mod_dispname] = _instance
             else:
                 self.display.error(
                     'Module \'%s\' disabled. Dependency required: \'%s\'' % (mod_name, _instance.getRequirements()))
@@ -591,6 +604,7 @@ class Framework():
         """Print Loaded Module Stats"""
         self.display.output("Input Modules Loaded:\t%i" % len(self.inputModules))
         self.display.output("Action Modules Loaded:\t%i" % len(self.actionModules))
+        self.display.output("Report Modules Loaded:\t%i" % len(self.reportModules))
 
     def additionalInfo(self):
         """Print Additional Information such as knowledge base path and current IP address"""
@@ -643,6 +657,12 @@ class Framework():
             self.displayMenu()
 
         kb.save(self.kbSaveFile)
+
+        # generate reports
+        self.display.output("Generating Reports")
+        for reportmodule in self.reportModules.keys():
+            _instance = self.reportModules[reportmodule]
+            _instance.process()
 
         self.display.output()
         self.display.output("Good Bye!")
