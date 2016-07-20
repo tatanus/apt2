@@ -58,5 +58,5 @@ class impacketsecretsdump(actionModule):
                             ntlmhash = m[3].strip()
 
                             kb.add("host/" + t + "/user/" + user + "/lmhash/" + lmhash)
-                            kb.add("host/" + t + "/user/" + user + "/lmhash/" + ntlmhash)
+                            kb.add("host/" + t + "/user/" + user + "/ntlmhash/" + ntlmhash)
         return
