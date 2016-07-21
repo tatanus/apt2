@@ -59,4 +59,6 @@ class impacketsecretsdump(actionModule):
 
                             kb.add("host/" + t + "/user/" + user + "/lmhash/" + lmhash)
                             kb.add("host/" + t + "/user/" + user + "/ntlmhash/" + ntlmhash)
+                            kb.add("host/" + t + "/user/" + user + "/fullhash/" + lmhash + ":" + ntlmhash)
+                            self.fire("newNTLMHash")
         return

