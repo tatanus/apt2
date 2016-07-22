@@ -87,7 +87,7 @@ class myMsf():
 
         if (self.id):
             result = self.conn.call('console.write', [self.id, cmd])
-            self.sleep(1)
+            self.sleep(2)
 
         return result
 

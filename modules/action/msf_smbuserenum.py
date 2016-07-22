@@ -44,7 +44,7 @@ class msf_smbuserenum(actionModule):
                     msf.execute("use auxiliary/scanner/smb/smb_enumusers\n")
                     msf.execute("set RHOSTS %s\n" % t)
                     msf.execute("run\n")
-                    # msf.sleep(int(self.config['msfexploitdelay']))
+                    msf.sleep(int(self.config['msfexploitdelay']))
                     result = msf.getResult()
                     while (re.search(".*execution completed.*", result) is None):
                         result = result + msf.getResult()

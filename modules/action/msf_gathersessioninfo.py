@@ -1,3 +1,4 @@
+import re
 from core.actionModule import actionModule
 from core.keystore import KeyStore as kb
 from core.mymsf import myMsf
@@ -40,28 +41,40 @@ class msf_gathersessioninfo(actionModule):
                             # add the new IP to the already seen list
                             self.addseentarget(s)
                             msf.execute("sessions -i " + str(s) + "\n")
+                            msf.sleep(int(self.config['msfexploitdelay']))
                             msf.execute("getuid\n")
+                            msf.sleep(int(self.config['msfexploitdelay']))
                             msf.execute("background\n")
 
-                            # TODO - process results and store dat to KB
                             outfile = self.config[
                                           "proofsDir"] + self.shortName + "_GetUid_" + t + "_" + Utils.getRandStr(
                                 10)
                             text = msf.getResult()
                             Utils.writeFile(text, outfile)
                             kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/", "%2F"))
+                            for line in text.splitlines():
+                                m = re.match(r'^\s*Server username: (.*)\s*', line)
+                                if (m):
+                                    self.display.verbose("Metasploit Session [" + s +
+                                            "] running as user [" + m.group(1).strip() + "]")
 
                             msf.execute("sessions -i " + str(s) + "\n")
+                            msf.sleep(int(self.config['msfexploitdelay']))
                             msf.execute("sysinfo\n")
+                            msf.sleep(int(self.config['msfexploitdelay']))
                             msf.execute("background\n")
 
-                            # TODO - process results and store dat to KB
                             outfile = self.config[
                                           "proofsDir"] + self.shortName + "_SysInfo_" + t + "_" + Utils.getRandStr(
                                 10)
                             text = msf.getResult()
                             Utils.writeFile(text, outfile)
                             kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/", "%2F"))
+                            for line in text.splitlines():
+                                m = re.match(r'^\s*OS\s\s*: (.*)\s*', line)
+                                if (m):
+                                    self.display.verbose("Metasploit Session [" + s +
+                                            "] running on OS [" + m.group(1).strip() + "]")
 
             # clean up after ourselves
             result = msf.cleanup()

