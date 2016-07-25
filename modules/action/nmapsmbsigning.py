@@ -33,5 +33,4 @@ class nmapsmbsigning(actionModule):
                 scan_results = n.run(target=t, flags="--script=smb-security-mode", ports="445", vector=self.vector,
                                      filetag=t + "_SMBSINGINGSCAN")['scan']
 
-                # TODO - process results
         return

@@ -10,7 +10,8 @@ class nmapnfsshares(actionModule):
         self.shortName = "NmapNFSShareScan"
         self.description = "execute [nmap -p2049 --script=nfs-ls,nfs-showmount] on each target"
 
-        self.requirements = ["nmap"]
+        # disabled for now as the nmap NSE scripts appear to have an issue
+        self.requirements = ["nmap, disabled"]
         self.triggers = ["newPort2049"]
 
         self.safeLevel = 5

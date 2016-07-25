@@ -45,6 +45,7 @@ class msf_snmplogin(actionModule):
                     msf.execute("set RHOSTS %s\n" % t)
                     msf.execute("set VERSION 2c")
                     msf.execute("run\n")
+                    msf.sleep(int(self.config['msfexploitdelay']))
                     result = msf.getResult()
                     while (re.search(".*execution completed.*", result) is None):
                         result = result + msf.getResult()

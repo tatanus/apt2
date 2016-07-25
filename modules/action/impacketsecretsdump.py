@@ -47,6 +47,18 @@ class impacketsecretsdump(actionModule):
                                   "\"@" + t
                         result = Utils.execWait(command, None)
 
-                        # TODO
-                        # parse out put and store any new info and fire any additional triggers
+                        with open (temp_file + '.sam', "r") as myfile:
+                            result=myfile.readlines()
+
+                        for line in result:
+                            m = line.split(':')
+                            user = m[0].strip()
+                            uid = m[1].strip()
+                            lmhash = m[2].strip()
+                            ntlmhash = m[3].strip()
+
+                            kb.add("host/" + t + "/user/" + user + "/lmhash/" + lmhash)
+                            kb.add("host/" + t + "/user/" + user + "/ntlmhash/" + ntlmhash)
+                            kb.add("host/" + t + "/user/" + user + "/fullhash/" + lmhash + ":" + ntlmhash)
+                            self.fire("newNTLMHash")
         return

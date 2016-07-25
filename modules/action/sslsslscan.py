@@ -1,4 +1,5 @@
 import re
+import sys
 
 from core.actionModule import actionModule
 from core.keystore import KeyStore as kb
@@ -30,16 +31,20 @@ class sslsslscan(actionModule):
             for port in ports:
                 # verify we have not tested this host before
                 if not self.seentarget(t + str(port)):
+                    # add the new IP to the already seen list
                     self.addseentarget(t + str(port))
                     # make outfile
                     temp_file = self.config["proofsDir"] + self.shortName + "_" + t + "_" + str(
                         port) + "_" + Utils.getRandStr(10)
 
                     command = "sslscan --no-color " + t + ":" + port
-                    result = Utils.execWait(command, temp_file, timeout=30)
+                    result = Utils.execWait(command, temp_file, timeout=60)
                     depricatedlist = []
                     weakciphers = []
                     keystrength = ""
+                    with open (temp_file, "r") as myfile:
+                        result=myfile.readlines()
+
                     for line in result:
                         m = re.match(r'^\s*Accepted\s\s+([^ ]*)\s\s*(\d\d*)\s\s*bits\s*([^ ]*)', line)
                         if (m):
@@ -49,26 +54,26 @@ class sslsslscan(actionModule):
                             if (protocol == "SSLv2"):
                                 if protocol not in depricatedlist:
                                     depricatedlist.append(protocol)
-                            if (protocol == "SSLv3"):
+                            elif (protocol == "SSLv3"):
                                 if protocol not in depricatedlist:
                                     depricatedlist.append(protocol)
-                            if (protocol == "TLSv1.0"):
+                            elif (protocol == "TLSv1.0"):
                                 if protocol not in depricatedlist:
                                     depricatedlist.append(protocol)
-                            if (protocol == "TLSv1.1"):
+                            elif (protocol == "TLSv1.1"):
                                 if protocol not in depricatedlist:
                                     depricatedlist.append(protocol)
-                            if (protocol == "TLSv1.2"):
+                            elif (protocol == "TLSv1.2"):
                                 if "DES" in cipher:
                                     if cipher not in weakciphers:
                                         weakciphers.append(cipher)
-                                if "RSA" in cipher:
+                                elif "RSA" in cipher:
                                     if cipher not in weakciphers:
                                         weakciphers.append(cipher)
-                                if "NULL" in cipher:
+                                elif "NULL" in cipher:
                                     if cipher not in weakciphers:
                                         weakciphers.append(cipher)
-                                if int(bit) < 112:
+                                elif int(bit) < 112:
                                     if cipher not in weakciphers:
                                         weakciphers.append(cipher)
                         else:
@@ -77,10 +82,16 @@ class sslsslscan(actionModule):
                                 if int(m.group(1).strip()) < 2048:
                                     keystrength = m.group(1).strip()
 
-                    # TODO - store data into KB?
+                    # store data into KB
+                    for depricatedProto in depricatedlist:
+                       kb.add('service/https/host/' + t + '/tcpport/' + port + '/depricatedSSLProto/' + depricatedProto)
+                    for weakCipher in weakciphers:
+                       kb.add('service/https/host/' + t + '/tcpport/' + port + '/weakSSLCipher/' + weakCipher)
+                    if keystrength is not "":
+                       kb.add('service/https/host/' + t + '/tcpport/' + port + '/weakSSLKeyStrength/' + keystrength)
+
                     # improve the output
                     self.display.debug(t + "," + str(port) + "," + ' '.join(depricatedlist) + "," + ' '.join(
                         weakciphers) + "," + keystrength)
 
-                    # add the new IP to the already seen list
         return
