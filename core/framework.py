@@ -11,6 +11,7 @@ from events import EventHandler
 from mynmap import mynmap
 from mymsf import myMsf
 from threading import RLock, Thread
+from keyeventthread import KeyEventThread
 
 
 class Framework():
@@ -57,6 +58,7 @@ class Framework():
         self.kbSaveFile = self.config["proofsDir"] + "KB-" + Utils.getRandStr(10) + ".save"
 
         self.threadcount_thread = None
+        self.keyevent_thread = None
 
         self.allFinished = False
 
@@ -126,6 +128,10 @@ class Framework():
     # Close everything down nicely
     # ----------------------------
     def cleanup(self):
+        #kill key press thread if it has been set up
+        if self.keyevent_thread:
+            self.keyevent_thread.stop()
+
         # kill thread count thread
         EventHandler.kill_thread_count_thread()
 
@@ -288,7 +294,8 @@ class Framework():
             if len(filenames) > 0:
                 for filename in [f for f in filenames if (f.endswith('.py') and not f == "__init__.py")]:
                     module = self.loadModule("input", dirpath, filename)
-                    module_dict[module['name'].rstrip(" ")] = module
+                    if module is not None:
+                        module_dict[module['name'].rstrip(" ")] = module
         # process actions
         path = os.path.join(sys.path[0], 'modules/action')
         for dirpath, dirnames, filenames in os.walk(path):
@@ -298,7 +305,8 @@ class Framework():
             if len(filenames) > 0:
                 for filename in [f for f in filenames if (f.endswith('.py') and not f == "__init__.py")]:
                     module = self.loadModule("action", dirpath, filename)
-                    module_dict[module['name'].rstrip(" ")] = module
+                    if module is not None:
+                        module_dict[module['name'].rstrip(" ")] = module
         # process reports
         path = os.path.join(sys.path[0], 'modules/report')
         for dirpath, dirnames, filenames in os.walk(path):
@@ -308,7 +316,8 @@ class Framework():
             if len(filenames) > 0:
                 for filename in [f for f in filenames if (f.endswith('.py') and not f == "__init__.py")]:
                     module = self.loadModule("report", dirpath, filename)
-                    module_dict[module['name'].rstrip(" ")] = module
+                    if module is not None:
+                        module_dict[module['name'].rstrip(" ")] = module
 
         return module_dict
 
@@ -376,11 +385,12 @@ class Framework():
         except ImportError as e:
             # notify the user of missing dependencies
             self.display.error('Module \'%s\' disabled. Dependency required: \'%s\'' % (mod_name, e))
+            return None
         except Exception as e:
             # notify the user of errors
             print e
             self.display.error('Module \'%s\' disabled.' % (mod_name))
-
+            return None
         return module_dict
 
     # ----------------------------
@@ -462,11 +472,15 @@ class Framework():
                    flags="-s" + self.config["scan_type"] + " " + self.config["scan_flags"] + " -iL " + self.config[
                        "scan_target_list"], vector="nmapScan")
         # begin main loop
+        self.keyevent_thread = KeyEventThread(self.display)
+        self.keyevent_thread.start()
+
         while not EventHandler.finished() or not self.allFinished:
             if (EventHandler.finished() and not self.allFinished):
                 EventHandler.fire("allFinished")
                 self.allFinished = True
-            EventHandler.processNext(self.display, int(self.config['max_modulethreads']))
+            if not self.keyevent_thread.isPaused():
+                EventHandler.processNext(self.display, int(self.config['max_modulethreads']))
             # kb.save(self.kbSaveFile)
 
     # ----------------------------
