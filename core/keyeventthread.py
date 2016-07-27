@@ -13,6 +13,8 @@ class KeyEventThread(Thread):
         self.display = pDisplay
 
     def run(self):
+        self.display.alert("Use the following controls while scans are running:")
+        self.display.alert("- p - pause/resume event queueing")
         #detect key presses
         while not self.end:
             #run until end is True

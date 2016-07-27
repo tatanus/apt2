@@ -1,3 +1,7 @@
+try:
+    import xml.etree.cElementTree as ET
+except ImportError:
+    import xml.etree.ElementTree as ET
 from core.actionModule import actionModule
 from core.keystore import KeyStore as kb
 from core.mynmap import mynmap
@@ -8,16 +12,16 @@ class nmapnfsshares(actionModule):
         super(nmapnfsshares, self).__init__(config, display, lock)
         self.title = "NMap NFS Share Scan"
         self.shortName = "NmapNFSShareScan"
-        self.description = "execute [nmap -p2049 --script=nfs-ls,nfs-showmount] on each target"
+        self.description = "execute [nmap -p111 --script=nfs-ls,nfs-showmount] on each target"
 
         # disabled for now as the nmap NSE scripts appear to have an issue
-        self.requirements = ["nmap, disabled"]
-        self.triggers = ["newPort2049"]
+        self.requirements = ["nmap"]
+        self.triggers = ["newPort111"]
 
         self.safeLevel = 5
 
     def getTargets(self):
-        self.targets = kb.get('host/*/tcpport/2049')
+        self.targets = kb.get('host/*/tcpport/111')
 
     def process(self):
         # load any targets we are interested in
@@ -32,8 +36,31 @@ class nmapnfsshares(actionModule):
                 self.display.verbose(self.shortName + " - Connecting to " + t)
                 # run nmap
                 n = mynmap(self.config, self.display)
-                scan_results = n.run(target=t, flags="--script=nfs-ls,nfs-showmount", ports="2049", vector=self.vector,
+                scan_results = n.run(target=t, flags="--script=nfs-ls,nfs-showmount", ports="111", vector=self.vector,
                                      filetag=t + "_NFSSHARESCAN")['scan']
 
-                # TODO - process results
+                tree = ET.parse(n.outfile + '.xml')
+                root = tree.getroot()
+                for volumestable in root.iter("table"):
+                    if volumestable.attrib.has_key('key') and volumestable.attrib['key'] == "volumes":
+                        for volume in volumestable:
+                            sharename = ""
+                            shareinfo = ""
+                            files = {}
+                            for elem in volume:
+                                if elem.attrib["key"] == "volume":
+                                    sharename = elem.text.replace("/", "%2F")
+                                if elem.attrib["key"] == "info":
+                                    shareinfo = elem[0].text.replace("/", "%2F")
+                                if elem.attrib["key"] == "files":
+                                    for file in elem:
+                                        newfile = {}
+                                        for fileprop in file:
+                                            newfile[fileprop.attrib["key"]] = fileprop.text
+                                        files[newfile["filename"]] = newfile
+                            kb.add("host/" + t + "/shares/NFS/" + sharename + "/" + str("Info: " + shareinfo))
+                            for file in files:
+                                # TODO - Maybe revisit adding more file properties here in addition to names
+                                kb.add("host/" + t + "/shares/NFS/" + sharename + "/Files/" + str(file).replace("/", "%2F"))
+                                
         return
