@@ -43,7 +43,7 @@ class msf_snmplogin(actionModule):
                     self.display.verbose(self.shortName + " - Connecting to " + t)
                     msf.execute("use auxiliary/scanner/snmp/snmp_login\n")
                     msf.execute("set RHOSTS %s\n" % t)
-                    msf.execute("set VERSION 2c")
+                    msf.execute("set VERSION 2c\n")
                     msf.execute("run\n")
                     msf.sleep(int(self.config['msfexploitdelay']))
                     result = msf.getResult()

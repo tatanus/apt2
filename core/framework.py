@@ -430,6 +430,8 @@ class Framework():
             # passed
             self.isRunning = False
             return
+        # fix prompt, sometimes input disappears
+        os.system("stty echo")
         self.display.output()
         self.display.output("---------------------------------------")
         self.display.output()
@@ -482,6 +484,8 @@ class Framework():
             if not self.keyevent_thread.isPaused():
                 EventHandler.processNext(self.display, int(self.config['max_modulethreads']))
             # kb.save(self.kbSaveFile)
+        #scan is done, stop checking for keypresses in case we go back to the menu
+        self.keyevent_thread.stop()
 
     # ----------------------------
     # Configure NMAP Scan Settings

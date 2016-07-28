@@ -2,9 +2,35 @@ try:
     from yattag import Doc
 except ImportError:
     raise ImportError('Missing Yattag, if you would like to enable report generation do: pip install yattag')
+import datetime
 from core.reportModule import reportModule
 from core.keystore import KeyStore as kb
 from core.utils import Utils
+
+#  Overview of KB structure for reporting
+#  1. host
+#     1. IP
+#         1. files (Files from tools run against this IP, not necessarily finding a vuln)
+#             1. filepath 
+#         2. tcpport
+#             1. port number
+#         3. udpport
+#             1. port number
+#         4. vuln
+#             1. name
+#                 1. message (Specific line in output confirming vuln)
+#                 2. module (What module found this vuln)
+#                 3. output (Files relating to this specific vuln)
+#                    1. file path
+#                 4. port (Port running the vulnerable service)
+#                 5. vector (Path from nmap to module)
+#                 6. etc... 
+#                    1. (try not to go deeper than this so I don't need recursive searching)
+#  2. service
+#     1. service name
+#         1. hosts
+#  3. domain
+#     1. domain name
 
 
 class reportgen(reportModule):
@@ -46,29 +72,32 @@ class reportgen(reportModule):
                     text('Generated Report')
                 with tag('style'):
                     text("""div{ width: 100%; }
-                        html { margin: 0; padding: 10px; }
-                        body { font: 12px verdana, sans-serif;line-height: 1.88889; background: #CCC; margin: 5%;
-                        padding: 0; width: 90%; }
+                        html { margin: 0; padding: 10px; background: #D3C6C6;}
+                        body { font: 12px verdana, sans-serif;line-height: 1.88889; margin: 5%; background: #A08D7D; padding: 1%; width: 90%; }
                         p { margin-top: 5px; text-align: justify; }
-                        h3 { font: italic normal 1.4em georgia, sans-serif; letter-spacing: 1px; margin-bottom: 0; }
-                        div.hostsection{ border-top: 1px solid #555555; min-height: 30px; background: #AAA; padding:
-                        0px;}
-                        div.hostsection h3{ font: bold; width: 100%; float: left; background: #CCC; }
-                        div.hostsection b{font: bold; width: 100%; float: left; background: #BBB;}
-                        .sectiontitle{ font: bold; width: 100%; float: left; background: #BBB; }
-                        .toc{ border-top: 2px solid #AAAAAA; }
+                        h3 { font: italic normal 1.4em georgia, sans-serif; letter-spacing: 1px; margin-bottom: 0; padding-left: 2px; }
+                        div.hostsection{ border-top: 3px solid #A07D7D; min-height: 30px; padding: 1%; background: #D3C6C6; width: 98%;}
+                        div.hostsection h3{ font: bold; width: 100%;}
+                        div.hostsection b{font: bold; width: 100%;}
+                        div.report-title { width: 98%; background: #D3C6C6; border-bottom: 10px solid #A07D7D; padding: 1%; }
+                        .sectiontitle{ font: bold; width: 50%; background: #A08D7D; box-shadow: 5px 5px 5px #A07D7D; padding-left: 2px;}
+                        .toc{ border-bottom: 2px solid #A07D7D; padding: 1%; width: 98%; background: #AF9393; }
                         .toctable{}
-                        .bodysection{ width: 90%; border-top: 1px solid #555555; }
-                        .bodysectiontext{}
+                        .bodysection{ width: 98%; border-bottom: 2px solid #A07D7D; padding: 1%; background: #AF9393; }
+                        .bodysectiontext{background: #D3C6C6;border-top: 2px solid #A07D7D;}
                         a.vulnname{ font: 16px verdana; }
-                        div.vulndescription{ border-top: 1px solid #000; min-height: 30px; background: #AAA; padding:
-                        5px; }
-                        .vulndescriptiontitle{ font: bold; width: 100%; float: left; background: #BBB; }
+                        div.vulndescription{ border-top: 2px solid #A07D7D; min-height: 30px; padding: 1%; background: #D3C6C6; width: 98%;}
+                        .vulndescriptiontitle{ font: bold; width: 98%; float: left;}
                         .vulndescriptioncontents{}
-                        a:link { font-weight: bold; text-decoration: none; }
+                        a:link { font-weight: bold; text-decoration: none; color: #FFF; }
                         a:visited { font-weight: bold; text-decoration: none; }
                         a:hover, a:focus, a:active { text-decoration: underline; }""")
             with tag('body'):
+                with tag('div', klass='report-title'):
+                    with tag('h2'):
+                        text("APT2 Report")
+                    with tag('b'):
+                        text("Generated {:%Y-%m-%d %H:%M:%S}".format(datetime.datetime.now()))
                 with tag('div', klass='toc'):
                     with tag('h2', klass='sectiontitle'):
                         text('Table of Contents')
@@ -147,9 +176,9 @@ class reportgen(reportModule):
                                                     ports = ports + ", " + p + "/TCP"
                                             for p in udpports:
                                                 if (ports == ""):
-                                                    ports = p + "/TCP"
+                                                    ports = p + "/UDP"
                                                 else:
-                                                    ports = ports + ", " + p + "/TCP"
+                                                    ports = ports + ", " + p + "/UDP"
                                             with tag('li'):
                                                 text(s + " - " + ports)
                                 # List Domains
@@ -179,6 +208,12 @@ class reportgen(reportModule):
                                         for s in hostshares:
                                             with tag('li'):
                                                 text(s)
+                                                with tag('ul'):
+                                                    #SMB or NFS
+                                                    sharenames = kb.get('host/' + t + '/share/' + s)
+                                                    for sn in sharenames:
+                                                        with tag('li'):
+                                                            text(sn)
                                 # Link to section in Vulnerabilities
                                 hostvulns = kb.get('host/' + t + '/vuln')
                                 if len(hostvulns) > 0:
@@ -191,7 +226,7 @@ class reportgen(reportModule):
                                                 with tag('a', href='#vuln' + t.replace('.', '') + str(i)):
                                                     i += 1
                                                     text(s)
-                                # List Shares
+                                # List Files
                                 hostfiles = kb.get('host/' + t + '/files')
                                 if len(hostfiles) > 0:
                                     with tag('b', klass='hostsection'):

@@ -12,7 +12,7 @@ Modules:
         3) possibly use Impacket's psexec.py to open windows shells
         4) attempt to gather creds via responder/smbrelayx
         5) ipmi tests:  ipmitool, msf
-        6) snmp tests:  << nmap -sU -p161 --script=snmp-brute [targets] >>, snmpwalk
+        6) snmp tests:  << nmap -sU -p161 --script=snmp-brute [targets] >>
         *7) X11 testing and screenshots:  xwd -root -screen -silent -display [target]:0 | xwdtopnm | pnmtopng > [target].png
         8) run crackmapexec.py on all windows systems for all usercreds:    ./crackmapexec.py [target] -d WORKGROUP -u [user] -H [hash] --mimikatz
         9) nmap test telnet services:  nmap -p23 --script=telnet-brute [targets]
@@ -54,6 +54,7 @@ CURRENT MODULES:
     searchftp                 Search files on FTP
     searchnfsshare            Search files on NFS Shares
     searchsmbshare            Search files on SMB Shares
+    snmpwalk		      Run snmpwalk with each found community string
     sslsslscan                Determine SSL protocols and ciphers
     ssltestsslserver          Determine SSL protocols and ciphers
     userenumrpcclient         Get List of Users From SMB

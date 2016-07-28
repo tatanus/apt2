@@ -1,3 +1,7 @@
+try:
+    import xml.etree.cElementTree as ET
+except ImportError:
+    import xml.etree.ElementTree as ET
 from core.actionModule import actionModule
 from core.keystore import KeyStore as kb
 from core.mynmap import mynmap
@@ -34,5 +38,12 @@ class nmapsmbshares(actionModule):
                 scan_results = n.run(target=t, flags="--script=smb-enum-shares", ports="445", vector=self.vector,
                                      filetag=t + "_SMBSHARESCAN")['scan']
 
-                # TODO - process results
+                tree = ET.parse(n.outfile + '.xml')
+                root = tree.getroot()
+                for table in root.iter('table'):
+                    sharename = table.attrib["key"]
+                    for elem in table:
+                        if elem.text is not None:
+                            kb.add("host/" + t + "/shares/SMB/" + sharename + "/" + str(elem.attrib['key'] + ": " + elem.text).replace("/", "%2F"))
+
         return
