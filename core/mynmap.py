@@ -116,10 +116,10 @@ class mynmap():
     def processScript(self, host, port, proto, vector):
         for script_id in self.nm[host][proto][port]["script"]:
             script_value = self.nm[host][proto][port]["script"][script_id]
-            if (script_id == "vnc-brute") and (script_value == "No authentication required"):
-                EventHandler.fire(script_id + ":" + vector)
-                self.addVuln(host, "VNCNoAuth", vector, {"port" : str(port), "message": script_value})
-                self.display.error("VULN [%s] Found on [%s]" % (script_id, host))
+            # if (script_id == "vnc-brute") and (script_value == "No authentication required"):
+            #     EventHandler.fire(script_id + ":" + vector)
+            #     self.addVuln(host, "VNCNoAuth", vector, {"port" : str(port), "message": script_value})
+            #     self.display.error("VULN [%s] Found on [%s]" % (script_id, host))
         return
 
     def fireScriptVulnEvent(self, script_id, host, vector):
@@ -136,9 +136,9 @@ class mynmap():
                 script_id = "ms08-067"
                 if "State: VULNERABLE" in output:
                     self.fireScriptVulnEvent(script_id, host, vector)
-            elif script_id == "smb-security-mode":
-                if "message_signing: disabled" in output:
-                    self.fireScriptVulnEvent(script_id, host, vector)
+            # elif script_id == "smb-security-mode":
+            #     if "message_signing: disabled" in output:
+            #         self.fireScriptVulnEvent(script_id, host, vector)
 
     def out(self):
         return self.nm.get_nmap_last_output()

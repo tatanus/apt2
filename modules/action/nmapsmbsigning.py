@@ -1,3 +1,7 @@
+try:
+    import xml.etree.cElementTree as ET
+except ImportError:
+    import xml.etree.ElementTree as ET
 from core.actionModule import actionModule
 from core.keystore import KeyStore as kb
 from core.mynmap import mynmap
@@ -32,5 +36,28 @@ class nmapsmbsigning(actionModule):
                 n = mynmap(self.config, self.display)
                 scan_results = n.run(target=t, flags="--script=smb-security-mode", ports="445", vector=self.vector,
                                      filetag=t + "_SMBSINGINGSCAN")['scan']
+                tree = ET.parse(n.outfile + '.xml')
+                root = tree.getroot()
+                account_used = ""
+                authentication_level = ""
+                challenge_response = ""
+                message_signing = ""
+                for elem in root.iter("elem"):
+                    if elem.attrib["key"] == "account_used":
+                        account_used = elem.text
+                    elif elem.attrib["key"] == "authentication_level":
+                        authentication_level = elem.text
+                    elif elem.attrib["key"] == "challenge_response":
+                        challenge_response = elem.text
+                    elif elem.attrib["key"] == "message_signing":
+                        message_signing = elem.text
+                if message_signing == "disabled":
+                    self.addVuln(t, "SMBSigningDisabled", {"port": "445",
+                                                            "output": n.outfile.replace("/", "%2F") + ".xml",
+                                                            "Account Used": account_used,
+                                                            "Authentication Level": authentication_level,
+                                                            "Challenge Response": challenge_response,
+                                                            "Message Signing": message_signing})
+                    self.fire("SMBSigningDisabled")             
 
         return
