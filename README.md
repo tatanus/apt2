@@ -1,3 +1,5 @@
+[![Black Hat Arsenal](https://www.toolswatch.org/badges/arsenal/2016.svg)](https://www.blackhat.com/html/bh-us-16/bh-us-16-arsenal.html/)
+
 # APT2 - An Automated Penetration Testing Toolkit
 
 ```
