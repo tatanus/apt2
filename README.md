@@ -1,5 +1,5 @@
 [![Black Hat Arsenal](https://www.toolswatch.org/badges/arsenal/2016.svg)](https://www.blackhat.com/html/bh-us-16/bh-us-16-arsenal.html/)
-
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/MooseDojo/apt2/master/LICENSE.txt)
 # APT2 - An Automated Penetration Testing Toolkit
 
 ```
