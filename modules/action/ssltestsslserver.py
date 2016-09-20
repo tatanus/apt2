@@ -47,7 +47,7 @@ class ssltestsslserver(actionModule):
 
                     for line in result:
                         if (tls12):
-                            m = re.match(r'^    (.*))', line)
+                            m = re.match(r'^    (.*)', line)
                             if (m):
                                 cipher = line.strip()
                                 if "DES" in cipher:

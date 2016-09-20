@@ -65,7 +65,7 @@ class responder(actionModule):
             self.addVuln(host, "NetBIOS|LLMNR", {"port": "445", "output": temp_file2.replace("/", "%2F")})
             kb.add("domain/" + domain + "/" + user + "/" + hashtype + "/" + fullhash)
             if len(cleartext) > 0:
-                kb.add("creds/" + host + "/445/SMB/" + user + "/" + cleartext)
+                kb.add("creds/host/" + host + "/port/445/service/smb/username/" + user + "/password/" + cleartext)
 
             #if not found_hash:
             #    time.sleep(300) # sleep for 5 minutes
