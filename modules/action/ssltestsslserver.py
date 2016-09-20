@@ -1,6 +1,7 @@
 from core.actionModule import actionModule
 from core.keystore import KeyStore as kb
 from core.utils import Utils
+import re
 
 
 class ssltestsslserver(actionModule):
@@ -62,7 +63,7 @@ class ssltestsslserver(actionModule):
                                 tls12 = False
 
                         else:
-                            m = re.match(r'^\s*Supported versions: (.*))', line)
+                            m = re.match(r'^\s*Supported versions: (.*)', line)
                             if (m):
                                 if ("SSLv2" in m.group(1)):
                                     protocol = "SSLv2"
