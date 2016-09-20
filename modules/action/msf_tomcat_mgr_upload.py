@@ -14,7 +14,7 @@ class msf_tomcat_mgr_upload(actionModule):
         self.title = "Attempt to gain shell via Tomcat"
         self.shortName = "MSFTomcatMgrUpload"
         self.description = "execute [exploit/multi/http/tomcat_mgr_upload] on each target"
-        self.safeLevel = 5
+        self.safeLevel = 3
 
     def getTargets(self):
         # we are interested only in the hosts that have UDP 161 open

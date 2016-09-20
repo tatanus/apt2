@@ -14,7 +14,7 @@ class msf_tomcat_mgr_login(actionModule):
         self.title = "Attempt to determine if a tomcat instance has default creds"
         self.shortName = "MSFTomcatMgrLogin"
         self.description = "execute [auxiliary/scanner/http/tomcat_mgr_login] on each target"
-        self.safeLevel = 5
+        self.safeLevel = 4
 
     def getTargets(self):
         # we are interested only in the hosts that have UDP 161 open
