@@ -1,3 +1,4 @@
+import threading 
 import ConfigParser
 import fcntl
 import os
@@ -113,13 +114,15 @@ class Utils():
     def execWait(cmd, outfile=None, timeout=0):
         result = ""
         env = os.environ
-        timeout_cmd = ""
+        proc = subprocess.Popen(cmd, executable='/bin/bash', env=env, stderr=subprocess.STDOUT, stdout=subprocess.PIPE, shell=True)
+
         if timeout:
-            timeout_cmd = "timeout " + str(timeout) + " "
-
-        proc = subprocess.Popen(timeout_cmd + cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            timer = threading.Timer(timeout, proc.kill)
+            timer.start()
         result = proc.communicate()[0]
-
+        if timeout:
+            if timer.is_alive():
+                timer.cancel()
         if outfile:
             if Utils.fileExists(outfile):
                 print "FILE ALREADY EXISTS!!!!"
