@@ -23,6 +23,7 @@ class mynmap():
         proofsDir = ""
         if "proofsDir" in self.config.keys():
             proofsDir = self.config["proofsDir"]
+        filetag = filetag.replace("/", "_")
         self.outfile = proofsDir + "NMAP-" + filetag + "-" + Utils.getRandStr(10)
 
         command = "nmap " + flags + " -p " + ports + " -oA " + self.outfile + " " + target
