@@ -49,7 +49,7 @@ class nmapvncbrute(actionModule):
                             for elem in scriptid.iter('elem'):
                                 if elem.attrib['key'] == "password":
                                     self.addVuln(t, "VNCBrutePass", {"port":portnum, "password":elem.text})
-                                    slef.fire("VNCBrutePass")
+                                    self.fire("VNCBrutePass")
 
 
         return
