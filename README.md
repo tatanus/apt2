@@ -1,4 +1,4 @@
-[![Black Hat Arsenal](https://www.toolswatch.org/badges/arsenal/2016.svg)](https://www.blackhat.com/html/bh-us-16/bh-us-16-arsenal.html/)
+[![Black Hat Arsenal](https://www.toolswatch.org/badges/arsenal/2016.svg)](https://www.blackhat.com/us-16/arsenal.html#automated-penetration-testing-toolkit-apt2)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/MooseDojo/apt2/master/LICENSE.txt)
 # APT2 - An Automated Penetration Testing Toolkit
 
@@ -123,3 +123,6 @@ sslsslscan                Determine SSL protocols and ciphers
 nmapms08067scan           NMap MS08-067 Scan
 msf_ms08_067              Attempt to exploit MS08-067
 ```
+
+## Videos
+[![DEMO](https://img.youtube.com/vi/6RJlfc5bVRk/0.jpg)](https://www.youtube.com/watch?v=6RJlfc5bVRk)
