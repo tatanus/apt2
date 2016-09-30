@@ -24,7 +24,13 @@ All module results are stored on localhost and are part of APT2's Knowledge Base
 
 ## Setup
 
-On Kali Linux install python-nmap library: `pip install python-nmap`
+On Kali Linux install python-nmap library:
+- pip install python-nmap
+- pip install pysmb
+- pip install yattag
+- pip install scapy
+- pip install ftputil
+- pip install msgpack-python
 
 ## Configuration (Optional)
 APT2 uses the *default.cfg* file in the root directory. Edit this file to configure APT2 to run as you desire.
