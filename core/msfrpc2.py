@@ -13,8 +13,10 @@
 # see <http://www.gnu.org/licenses/>.
 
 import httplib
-import msgpack
-
+try:
+    import msgpack
+except:
+    sys.exit("[!] Install the msgpack library: pip install msgpack-python")
 
 class Msfrpc:
     class MsfError(Exception):
