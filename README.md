@@ -32,6 +32,11 @@ On Kali Linux install python-nmap library:
 - pip install ftputil
 - pip install msgpack-python
 
+## Current External Program/Script Dependencies
+To make full use of all of APT2's modules, the following external dependencies should be install on your system:
+
+convert, dirb, hydra, java, john, ldapsearch, msfconsole, nmap, nmblookup, phantomjs, responder, rpcclient, secretsdump.py, smbclient, snmpwalk, sslscan, xwd
+
 ## Configuration (Optional)
 APT2 uses the *default.cfg* file in the root directory. Edit this file to configure APT2 to run as you desire.
 
