@@ -99,9 +99,8 @@ class Framework():
         try:
             pattern = "'(\d+\.\d+\.\d+[^']*)'"
             # Get the VERSION that exists on Github
-            # emote = re.search(pattern, self.request(
-            # 'https://raw.githubusercontent.com/tatanus/automated_pentest/master/VERSION').raw).group(1)
-            remote = re.search(pattern, open('VERSION_remote').read()).group(1)
+            remote = re.search(pattern,
+                    self.request('https://raw.githubusercontent.com/moosedojo/apt2/master/VERSION').raw).group(1)
             # Get the version that is local
             local = re.search(pattern, open('VERSION').read()).group(1)
             self.version = local
