@@ -19,10 +19,11 @@ class searchsmbshare(actionModule):
         # self.requirements = ['disable']
         self.requirements = []
         self.triggers = ["newServicensmb", "newPort445", "newPort139"]
+        self.types = ["filesearch"]
 
         self.safeLevel = 4
 
-        self.filepatterns = ['.bat', '*.sh', '*passwd*', '*password*', '*Pass*', '*.conf', '*.cnf', '*.cfg', '*.config']
+        self.filepatterns = self.config["file_search_patterns"].split(",")
 
     def getTargets(self):
         # we are interested in all hosts

@@ -13,6 +13,7 @@ class msf_dumphashes(actionModule):
 
         self.requirements = ["msfconsole"]
         self.triggers = ["msfSession"]
+        self.types = ["passwords"]
 
         self.safeLevel = 4
 
