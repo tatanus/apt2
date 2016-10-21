@@ -15,7 +15,8 @@ class msf_ms08_067(actionModule):
 
         self.requirements = ["msfconsole"]
         self.triggers = ["ms08-067"]
-
+        self.types = ["exploit"]
+        
         self.safeLevel = 4
 
     def getTargets(self):

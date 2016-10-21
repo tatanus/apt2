@@ -14,6 +14,7 @@ class httpserverversion(actionModule):
 
         self.requirements = []
         self.triggers = ["newServicehttp", "newServicehttps", "newPort80", "newPort443"]
+        self.types = ["http"]
 
         self.safeLevel = 5
 

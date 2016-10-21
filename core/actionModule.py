@@ -5,7 +5,6 @@ from core.events import EventHandler
 from core.keystore import KeyStore as kb
 from core.packetcap import pktcap
 
-
 class actionModule(object):
     seentargets = dict()
 
@@ -22,6 +21,7 @@ class actionModule(object):
         self.vector = ""
         self.lock = lock
         self.maxThreads = 100
+        self.types = []
 
     def getTitle(self):
         return self.title
@@ -37,6 +37,9 @@ class actionModule(object):
 
     def getRequirements(self):
         return self.requirements
+
+    def getTypes(self):
+        return self.types
 
     def getShortName(self):
         return self.shortName
@@ -108,10 +111,10 @@ class actionModule(object):
         return string
 
     def getUsers(self, host):
-        return kb.get('host/' + host + '/hostname/')
+        return kb.get('host/' + host + '/user/')
 
     def getHostnames(self, host):
-        return kb.get('host/' + host + '/user/')
+        return kb.get('host/' + host + '/hostname/')
 
     def addVuln(self, host, vuln, details={}):
         kb.add("host/" + host + "/vuln/" + vuln + "/module/" + self.shortName)

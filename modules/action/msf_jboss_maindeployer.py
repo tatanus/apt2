@@ -11,6 +11,7 @@ class msf_jboss_maindeployer(actionModule):
         super(msf_jboss_maindeployer, self).__init__(config, display, lock)
         self.triggers = ["newJbossPassword"]
         self.requirements = ["msfconsole"]
+        self.types = ["http"]
         self.title = "Attempt to gain shell via Jboss"
         self.shortName = "MSFJbossMainDeployer"
         self.description = "execute [exploit/multi/http/jboss_maindeployer] on each target"

@@ -11,6 +11,7 @@ class msf_tomcat_mgr_upload(actionModule):
         super(msf_tomcat_mgr_upload, self).__init__(config, display, lock)
         self.triggers = ["newTomcatPassword"]
         self.requirements = ["msfconsole"]
+        self.types = ["http"]
         self.title = "Attempt to gain shell via Tomcat"
         self.shortName = "MSFTomcatMgrUpload"
         self.description = "execute [exploit/multi/http/tomcat_mgr_upload] on each target"
