@@ -27,7 +27,7 @@ All module results are stored on localhost and are part of APT2's Knowledge Base
 
 ## Setup
 
-** *NOTE:*  APT2 is currently only tested on Linux based OSes.  If you can confirm that it works on other OSes, please let us know. **
+***NOTE:*  APT2 is currently only tested on Linux based OSes.  If you can confirm that it works on other OSes, please let us know.**
 
 On Kali Linux install python-nmap library:
 - pip install python-nmap
