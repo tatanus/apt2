@@ -43,7 +43,7 @@ class impacketsecretsdump(actionModule):
                             10)
 
                         # run secretesdump.py
-                        command = "secretsdump.py -outputfile " + temp_file + " \"" + user + "\":\"" + password + \
+                        command = self.config["secretsdump.py"] + " -outputfile " + temp_file + " \"" + user + "\":\"" + password + \
                                   "\"@" + t
                         result = Utils.execWait(command, None)
 

@@ -11,7 +11,7 @@ class responder(actionModule):
         self.shortName = "Responder"
         self.description = "execute [reponder -I eth0 -wrf]"
 
-        self.requirements = ["responder"]
+        self.requirements = ["sqlite", "responder"]
         self.triggers = ["always"]
 
         self.safeLevel = 3
@@ -34,13 +34,13 @@ class responder(actionModule):
         self.display.output("Starting responder...")
         temp_file1 = self.config["proofsDir"] + self.shortName + "_" + Utils.getRandStr(10)
         temp_file2 = self.config["proofsDir"] + self.shortName + "_" + Utils.getRandStr(10)
-        command = "python " + config["responder"] + " -I " + default_interface + " -i " + my_ip + " -wrf"
+        command = "python " + self.config["responder"] + " -I " + default_interface + " -i " + my_ip + " -wrf"
         # run for 15 minutes
         start_time = '{:%d-%m-%Y %H:%M:%S}'.format(datetime.datetime.now())
         result = Utils.execWait(command, temp_file1, timeout=900)
         responder_db = responder_path + "Responder.db"
         #STDOUT unreliable, grabbed hashes directly from the DB instead
-        command = "sqlite3 " + responder_db + " \"select * from responder where timestamp > '" + start_time + "'\""
+        command = self.config["sqlite3"] + " " + responder_db + " \"select * from responder where timestamp > '" + start_time + "'\""
         result = Utils.execWait(command, temp_file2, timeout=10)
         times_run += 1
         #Have to account for responder not creating a new db file if nothing was found

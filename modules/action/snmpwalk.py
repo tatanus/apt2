@@ -31,7 +31,7 @@ class snmpwalk(actionModule):
                     self.addseentarget(t)
                     cstrings = kb.get("host/" + t + "/vuln/snmpCred/communityString")
                     for community in cstrings:
-                        command = "snmpwalk -v 2c -c " + community + " " + t
+                        command = self.config["snmpwalk"] + " -v 2c -c " + community + " " + t
                         result = command + "\n" + Utils.execWait(command) #append command to top of output
                         outfile = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)
                         Utils.writeFile(result, outfile)

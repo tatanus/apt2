@@ -35,7 +35,7 @@ class anonldap(actionModule):
                 outfile = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)
 
                 # run rpcclient
-                command = "ldapsearch -h " + t + " -p 389 -x -s base"
+                command = self.config["ldapsearch"] + " -h " + t + " -p 389 -x -s base"
                 result = Utils.execWait(command, outfile)
 
                 # TODO - Parse output and do stuff

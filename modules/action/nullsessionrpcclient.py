@@ -34,7 +34,7 @@ class nullsessionrpcclient(actionModule):
                 self.display.verbose(self.shortName + " - Connecting to " + t)
                 # get windows domain/workgroup
                 temp_file2 = self.config["proofsDir"] + "nmblookup_" + t + "_" + Utils.getRandStr(10)
-                command2 = "nmblookup -A " + t
+                command2 = self.config["nmblookup"] + " -A " + t
                 result2 = Utils.execWait(command2, temp_file2)
                 workgroup = "WORKGROUP"
                 for line in result2.split('\n'):
@@ -47,7 +47,7 @@ class nullsessionrpcclient(actionModule):
                 outfile = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)
 
                 # run rpcclient
-                command = "rpcclient -N -U \"\" -W " + workgroup + " " + t + " -c srvinfo"
+                command = self.config["rpcclient"] + " -N -U \"\" -W " + workgroup + " " + t + " -c srvinfo"
                 result = Utils.execWait(command, outfile)
 
                 # check to see if it worked

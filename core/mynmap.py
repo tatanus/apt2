@@ -26,7 +26,7 @@ class mynmap():
         filetag = filetag.replace("/", "_")
         self.outfile = proofsDir + "NMAP-" + filetag + "-" + Utils.getRandStr(10)
 
-        command = "nmap " + flags + " -p " + ports + " -oA " + self.outfile + " " + target
+        command = self.config["nmap"] + " " + flags + " -p " + ports + " -oA " + self.outfile + " " + target
         tmp_results = Utils.execWait(command)
         self.display.output("Scan file saved to [%s]" % self.outfile)
 

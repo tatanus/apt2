@@ -35,7 +35,7 @@ class ssltestsslserver(actionModule):
                     temp_file = self.config["proofsDir"] + self.shortName + "_" + t + "_" + str(
                         port) + "_" + Utils.getRandStr(10)
 
-                    command = "java -jar " + self.config["miscDir"] + "TestSSLServer.jar " + t + " " + port
+                    command = self.config["java"] + " -jar " + self.config["miscDir"] + "TestSSLServer.jar " + t + " " + port
                     result = Utils.execWait(command, temp_file, timeout=30)
 
                     depricatedlist = []

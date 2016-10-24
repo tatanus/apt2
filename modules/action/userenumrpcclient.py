@@ -31,7 +31,7 @@ class userenumrpcclient(actionModule):
         chunk_size = 2500
         chunks = list(self.chunk(ranges, chunk_size))
         for c in chunks:
-            command = 'rpcclient -U "" %s -N -c "lookupsids ' % ip
+            command = self.config["rpcclient"] + ' -U "" %s -N -c "lookupsids ' % ip
             command += ' '.join(c)
             command += '"'
             result = Utils.execWait(command, None)
@@ -61,7 +61,7 @@ class userenumrpcclient(actionModule):
 
                 # get windows domain/workgroup
                 temp_file2 = self.config["proofsDir"] + "nmblookup_" + t + "_" + Utils.getRandStr(10)
-                command2 = "nmblookup -A " + t
+                command2 = self.config["nmblookup"] + " -A " + t
                 result2 = Utils.execWait(command2, temp_file2)
                 workgroup = "WORKGROUP"
                 for line in result2.split('\n'):
@@ -77,7 +77,7 @@ class userenumrpcclient(actionModule):
                 temp_file = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)
 
                 # run rpcclient
-                command = "rpcclient -N -U \"\" " + t + " -c enumdomusers"
+                command = self.config["rpcclient"] + " -N -U \"\" " + t + " -c enumdomusers"
                 result = Utils.execWait(command, temp_file)
 
                 # check to see if it worked
@@ -86,7 +86,7 @@ class userenumrpcclient(actionModule):
                     rid_stop = 10000
                     sid = False
                     # pull the domain via lsaenum
-                    result2 = Utils.execWait('rpcclient -U "" %s -N -c "lsaquery"' % t, None)
+                    result2 = Utils.execWait(self.config["rpcclient"] + ' -U "" %s -N -c "lsaquery"' % t, None)
                     # if the user wasn't found, return a False
                     if "Domain Sid" in result2:
                         sid = result2

@@ -36,7 +36,7 @@ class hydrasmbpassword(actionModule):
                     # make outfile
                     temp_file = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)
 
-                    command = "hydra -s 445 -l " + user + " -P " + self.config[
+                    command = self.config["hydra"] + " -s 445 -l " + user + " -P " + self.config[
                         "miscDir"] + "passwords.txt smb://" + t
                     result = Utils.execWait(command, temp_file, timeout=30)
 
