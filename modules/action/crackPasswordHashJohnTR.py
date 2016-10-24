@@ -11,6 +11,7 @@ class crackPasswordHashJohnTR(actionModule):
 
         self.requirements = ["john"]
         self.triggers = ["newPasswordHash"]
+        self.types = ["hashcrack"]
 
         self.safeLevel = 5
 

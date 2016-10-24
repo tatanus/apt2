@@ -15,6 +15,7 @@ class msf_psexec_pth(actionModule):
 
         self.requirements = ["msfconsole"]
         self.triggers = ["newNTLMHash"]
+        self.types = ["passwords"]
 
         self.safeLevel = 4
 

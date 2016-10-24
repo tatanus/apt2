@@ -13,6 +13,7 @@ class responder(actionModule):
 
         self.requirements = ["sqlite", "responder"]
         self.triggers = ["always"]
+        self.types = ["mitm"]
 
         self.safeLevel = 3
 

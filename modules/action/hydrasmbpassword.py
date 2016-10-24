@@ -14,6 +14,7 @@ class hydrasmbpassword(actionModule):
 
         self.requirements = ["hydra"]
         self.triggers = ["newUser"]
+        self.types = ["passwords"]
 
         self.safeLevel = 2
 

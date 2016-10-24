@@ -53,6 +53,7 @@ class Framework():
         self.config["scan_target_list"] = None
 
         self.config["safe_level"] = 4
+        self.config["exclude_types"] = ""
 
         # make temp file for the KB save file
         self.kbSaveFile = self.config["proofsDir"] + "KB-" + Utils.getRandStr(10) + ".save"
@@ -212,6 +213,11 @@ class Framework():
                             action='store',
                             default=4,
                             help="set min safe level for modules. 0 is unsafe and 5 is very safe. Default is 4")
+        parser.add_argument("-x", "--exclude",
+                            dest="exclude_types",
+                            action="store",
+                            default="",
+                            help="specify a comma seperatec list of module types to exclude from running")
         parser.add_argument("-b", "--bypassmenu",
                             dest="bypass_menu",
                             action='store_true',
@@ -234,6 +240,7 @@ class Framework():
         self.config["list_modules"] = args.list_modules
         self.config["scan_target"] = args.scan_target
         self.config["safe_level"] = int(args.safe_level)
+        self.config["exclude_types"] = args.exclude_types
         self.config['lhost'] = args.lhost
         self.config["bypass_menu"] = args.bypass_menu
         for f in args.inputs:
@@ -321,6 +328,16 @@ class Framework():
         return module_dict
 
     # ----------------------------
+    # check to see if the module is of an exclude module type
+    # ----------------------------
+    def checkExcludeTypes(self, types):
+        for t in types:
+            for T in self.config["exclude_types"].split(','):
+                if t == T:
+                    return True
+        return False
+
+    # ----------------------------
     # load each module
     # ----------------------------
     def loadModule(self, type, dirpath, filename):
@@ -369,6 +386,10 @@ class Framework():
                         self.display.error(
                             'Module \'%s\' disabled. Safety_level (%i) is below specified requirement (%i)' % (
                                 mod_name, _instance.getSafeLevel(), self.config["safe_level"]))
+                    elif self.checkExcludeTypes(_instance.getTypes()) == True:
+                        self.display.error(
+                            'Module \'%s\' disabled. One or more of the following module types were excluded %s' % (
+                                mod_name, _instance.getTypes()))
                     else:
                         self.actionModules[mod_dispname] = _instance
                         for t in _instance.getTriggers():

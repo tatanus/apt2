@@ -11,6 +11,7 @@ class msf_tomcat_mgr_login(actionModule):
         super(msf_tomcat_mgr_login, self).__init__(config, display, lock)
         self.triggers = ["newServicehttp", "newPort80", "newPort8080"]
         self.requirements = ["msfconsole"]
+        self.types = ["http"]
         self.title = "Attempt to determine if a tomcat instance has default creds"
         self.shortName = "MSFTomcatMgrLogin"
         self.description = "execute [auxiliary/scanner/http/tomcat_mgr_login] on each target"

@@ -12,6 +12,7 @@ class impacketsecretsdump(actionModule):
 
         self.requirements = ["secretsdump.py"]
         self.triggers = ["newSmbPassword"]
+        self.types = ["passwords"]
 
         self.safeLevel = 5
 

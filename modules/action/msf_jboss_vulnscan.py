@@ -11,6 +11,7 @@ class msf_jboss_vulnscan(actionModule):
         super(msf_jboss_vulnscan, self).__init__(config, display, lock)
         self.triggers = ["newServicehttp", "newPort80", "newPort8080"]
         self.requirements = ["msfconsole"]
+        self.types = ["http"]
         self.title = "Attempt to determine if a jboss instance has default creds"
         self.shortName = "MSFJbossVulnscan"
         self.description = "execute [auxiliary/scanner/http/jboss_vulnscan] on each target"

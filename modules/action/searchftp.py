@@ -19,10 +19,11 @@ class searchftp(actionModule):
 
         self.requirements = []
         self.triggers = ["newServiceftp", "newPort21"]
+        self.types = ["filesearch"]
 
         self.safeLevel = 4
 
-        self.filepatterns = ['.bat', '*.sh', '*passwd*', '*password*', '*Pass*', '*.conf', '*.cnf', '*.cfg', '*.config']
+        self.filepatterns = self.config["file_search_patterns"].split(",")
 
     def getTargets(self):
         # we are interested in all hosts
@@ -32,8 +33,8 @@ class searchftp(actionModule):
     def searchTarget(self, target, port, username, password):
         success = False
         # start packet capture
-        cap = self.pktCap(filter="tcp and port " + str(port) + " and host " + target, packetcount=10, timeout=10,
-                          srcip="", dstip=target)
+#        cap = self.pktCap(filter="tcp and port " + str(port) + " and host " + target, packetcount=10, timeout=10,
+#                          srcip="", dstip=target)
         try:
             if (Utils.port_open(target, 21)):
                 # attempt to connect to the remote host
@@ -53,9 +54,9 @@ class searchftp(actionModule):
         except ftputil.error.PermanentError:
             self.display.error("Could not connect to %s on port 21" % (target))
 
-        outfile = self.config["proofsDir"] + self.shortName + "_PCAP_Port" + str(
-            port) + "_" + target + "_" + Utils.getRandStr(10)
-        Utils.writeFile(self.getPktCap(cap), outfile)
+#        outfile = self.config["proofsDir"] + self.shortName + "_PCAP_Port" + str(
+#            port) + "_" + target + "_" + Utils.getRandStr(10)
+#        Utils.writeFile(self.getPktCap(cap), outfile)
         kb.add("host/" + target + "/files/" + self.shortName + "/" + outfile.replace("/", "%2F"))
         return success
 
