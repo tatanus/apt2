@@ -21,7 +21,7 @@ class responder(actionModule):
     def process(self):
         default_interface = self.config["responder_iface"]
         default_delay = self.config["responder_delay"]
-        responder_path = self.config["responder_path"]
+        #responder_path = self.config["responder_path"]
         my_ip = self.config["lhost"]
 
         # TODO
@@ -34,7 +34,7 @@ class responder(actionModule):
         self.display.output("Starting responder...")
         temp_file1 = self.config["proofsDir"] + self.shortName + "_" + Utils.getRandStr(10)
         temp_file2 = self.config["proofsDir"] + self.shortName + "_" + Utils.getRandStr(10)
-        command = "python " + responder_path + "Responder.py -I " + default_interface + " -i " + my_ip + " -wrf"
+        command = "python " + config["responder"] + " -I " + default_interface + " -i " + my_ip + " -wrf"
         # run for 15 minutes
         start_time = '{:%d-%m-%Y %H:%M:%S}'.format(datetime.datetime.now())
         result = Utils.execWait(command, temp_file1, timeout=900)
