@@ -1,4 +1,5 @@
 import datetime
+import os
 from core.actionModule import actionModule
 from core.utils import Utils
 from core.keystore import KeyStore as kb
@@ -11,7 +12,7 @@ class responder(actionModule):
         self.shortName = "Responder"
         self.description = "execute [reponder -I eth0 -wrf]"
 
-        self.requirements = ["sqlite", "responder"]
+        self.requirements = ["sqlite3", "responder"]
         self.triggers = ["always"]
         self.types = ["mitm"]
 
@@ -39,7 +40,8 @@ class responder(actionModule):
         # run for 15 minutes
         start_time = '{:%d-%m-%Y %H:%M:%S}'.format(datetime.datetime.now())
         result = Utils.execWait(command, temp_file1, timeout=900)
-        responder_db = responder_path + "Responder.db"
+        responder_path, temp1 = os.path.split(self.config["responder"])
+        responder_db = responder_path + "/Responder.db"
         #STDOUT unreliable, grabbed hashes directly from the DB instead
         command = self.config["sqlite3"] + " " + responder_db + " \"select * from responder where timestamp > '" + start_time + "'\""
         result = Utils.execWait(command, temp_file2, timeout=10)
