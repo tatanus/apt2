@@ -48,18 +48,19 @@ class impacketsecretsdump(actionModule):
                                   "\"@" + t
                         result = Utils.execWait(command, None)
 
-                        with open (temp_file + '.sam', "r") as myfile:
-                            result=myfile.readlines()
+                        if Utils.isReadable(temp_file + '.sam'): 
+                            with open (temp_file + '.sam', "r") as myfile:
+                                result=myfile.readlines()
 
-                        for line in result:
-                            m = line.split(':')
-                            user = m[0].strip()
-                            uid = m[1].strip()
-                            lmhash = m[2].strip()
-                            ntlmhash = m[3].strip()
+                            for line in result:
+                                m = line.split(':')
+                                user = m[0].strip()
+                                uid = m[1].strip()
+                                lmhash = m[2].strip()
+                                ntlmhash = m[3].strip()
 
-                            kb.add("host/" + t + "/user/" + user + "/lmhash/" + lmhash)
-                            kb.add("host/" + t + "/user/" + user + "/ntlmhash/" + ntlmhash)
-                            kb.add("host/" + t + "/user/" + user + "/fullhash/" + lmhash + ":" + ntlmhash)
-                            self.fire("newNTLMHash")
+                                kb.add("host/" + t + "/user/" + user + "/lmhash/" + lmhash)
+                                kb.add("host/" + t + "/user/" + user + "/ntlmhash/" + ntlmhash)
+                                kb.add("host/" + t + "/user/" + user + "/fullhash/" + lmhash + ":" + ntlmhash)
+                                self.fire("newNTLMHash")
         return
