@@ -120,8 +120,10 @@ class EventHandler(object):
             display.alert("Current # of Active Threads = [%i]" % len(EventHandler.my_threads))
             tmp_list = ""
             for t in EventHandler.my_threads:
-                tmp_list = tmp_list + ", " + t.getName()
-            display.debug("     " + tmp_list)
+                if not tmp_list == "":
+                    tmp_list = tmp_list + ", "
+                tmp_list = tmp_list + t.getName()
+            display.alert("    ==> " + tmp_list)
             time.sleep(delay)
 
     @staticmethod
