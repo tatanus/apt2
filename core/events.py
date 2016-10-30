@@ -50,6 +50,10 @@ class EventQueue():
     def empty():
         return EventQueue.eventQueue.empty()
 
+    @staticmethod
+    def size():
+        return EventQueue.eventQueue.qsize()
+
 
 class EventHandler(object):
     eventList = {}
@@ -117,13 +121,15 @@ class EventHandler(object):
         while (EventHandler.ActiveThreadCountThread):
             while (EventHandler.ActiveThreadCountThread and len(EventHandler.my_threads) == 0):
                 time.sleep(delay)
-            display.alert("Current # of Active Threads = [%i]" % len(EventHandler.my_threads))
+            display.alert("Current # of Active Threads = [%i]" %
+                    len(EventHandler.my_threads))
             tmp_list = ""
             for t in EventHandler.my_threads:
                 if not tmp_list == "":
                     tmp_list = tmp_list + ", "
                 tmp_list = tmp_list + t.getName()
             display.alert("    ==> " + tmp_list)
+            display.debug("EventQueue Size = [%i]" % EventQueue.size())
             time.sleep(delay)
 
     @staticmethod
