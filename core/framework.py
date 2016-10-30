@@ -258,7 +258,7 @@ class Framework():
         # does config file exist?
         if (("config_filename" in self.config) and (self.config["config_filename"] is not None)):
             temp1 = self.config
-            temp2 = Utils.load_config(self.config["config_filename"])
+            temp2 = Utils.loadConfig(self.config["config_filename"])
             self.config = dict(temp2.items() + temp1.items())
         else:
             # guess not..   so try to load the default one
