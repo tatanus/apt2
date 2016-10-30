@@ -39,7 +39,7 @@ class responder(actionModule):
         command = "python " + self.config["responder"] + " -I " + default_interface + " -i " + my_ip + " -wrf"
         # run for 15 minutes
         start_time = '{:%d-%m-%Y %H:%M:%S}'.format(datetime.datetime.now())
-        result = Utils.execWait(command, temp_file1, timeout=self.config["responder_timeout"])
+        result = Utils.execWait(command, temp_file1, timeout=int(self.config["responder_timeout"]))
         responder_path, temp1 = os.path.split(self.config["responder"])
         responder_db = responder_path + "/Responder.db"
         #STDOUT unreliable, grabbed hashes directly from the DB instead
