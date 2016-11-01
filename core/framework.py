@@ -279,6 +279,11 @@ class Framework():
             if (self.config['verbose'] > 1):
                 self.display.enableDebug()
 
+        if ((self.config["lhost"] == None) or (self.config["lhost"] == "")):
+            self.display.error("No IP was able to be determined and one was not provided.")
+            self.display.error("Please specify one via the [--ip <ip>] argument.")
+            self.cleanup()
+
     # ----------------------------
     # Load Initial Events
     # ----------------------------

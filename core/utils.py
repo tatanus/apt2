@@ -145,16 +145,19 @@ class Utils():
 
     @staticmethod
     def getIP():
-        ip = socket.gethostbyname(socket.gethostname())
-        if ip.startswith("127."):
-            interfaces = ["eth0", "eth1", "eth2", "wlan0", "wlan1", "wifi0", "ath0", "ath1", "ppp0", ]
-            for ifname in interfaces:
-                try:
-                    ip = Utils.getInterfaceIP(ifname)
-                    break
-                except IOError:
-                    pass
-        return ip
+        try:
+            ip = socket.gethostbyname(socket.gethostname())
+            if ip.startswith("127."):
+                interfaces = ["eth0", "eth1", "eth2", "wlan0", "wlan1", "wifi0", "ath0", "ath1", "ppp0", ]
+                for ifname in interfaces:
+                    try:
+                        ip = Utils.getInterfaceIP(ifname)
+                        break
+                    except IOError:
+                        pass
+            return ip
+        except socket.gaierror:
+            return None
 
     @staticmethod
     def getUnusedPort():
