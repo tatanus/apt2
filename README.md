@@ -143,7 +143,9 @@ msf_ms08_067              Attempt to exploit MS08-067
 
 ## Videos
 Demo given at: BlackHat US 2016 Tools Arsenal/Defcon 24 Demo Lab
+
 [![BHUS TA DEMO](https://img.youtube.com/vi/6RJlfc5bVRk/0.jpg)](https://www.youtube.com/watch?v=6RJlfc5bVRk)
 
 Demo given at: BlackHat EU 2016 Tools Arsenal
+
 [![BHEU TA DEMO](https://img.youtube.com/vi/94hk6bNwQfU/0.jpg)](https://www.youtube.com/watch?v=94hk6bNwQfU)
