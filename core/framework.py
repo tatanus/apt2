@@ -655,7 +655,7 @@ class Framework():
                 "If you wish to make use of Metasploit modules within APT2, please update the config file with the "
                 "appropiate settings.")
             self.display.error("Connect by launching msfconsole and then issue the following command:")
-            self.display.error("     load msgrpc User=" + self.config['msfuser'] + "Pass=" + self.config['msfpass'] + " ServerPort=" + self.config['msfport'])
+            self.display.error("     load msgrpc User=" + self.config['msfuser'] + " Pass=" + self.config['msfpass'] + " ServerPort=" + self.config['msfport'])
             self.display.output()
 
     def modulesLoaded(self):
