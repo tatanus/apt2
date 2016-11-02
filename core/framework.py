@@ -361,13 +361,18 @@ class Framework():
             _class = getattr(_module, mod_name)
             _instance = _class(self.config, self.display, self.modulelock)
 
+            reasons = []
+
             valid = True
             for r in _instance.getRequirements():
-                if not r in self.config:
+                if r == 'disable':
+                    reasons.append("Module Manually Disabled !!!")
+                elif not r in self.config:
                     path = Utils.validateExecutable(r)
                     if path:
                         self.config[r] = path
                     else:
+                        reasons.append("Requirement not met: %s" % r)
                         valid = False
             if valid:
                 module_dict = {'name': mod_name.ljust(25),
@@ -388,13 +393,15 @@ class Framework():
             if valid:
                 if type == "action":
                     if self.config["safe_level"] > _instance.getSafeLevel():
-                        self.display.error(
-                            'Module \'%s\' disabled. Safety_level (%i) is below specified requirement (%i)' % (
-                                mod_name, _instance.getSafeLevel(), self.config["safe_level"]))
+                        reasons.append("Safety_Level (%i) is below requirement: %i" % (_instance.getSafeLevel(), self.config["safe_level"]))
+                        #self.display.error(
+                        #    'Module \'%s\' disabled. Safety_level (%i) is below specified requirement (%i)' % (
+                        #        mod_name, _instance.getSafeLevel(), self.config["safe_level"]))
                     elif self.checkExcludeTypes(_instance.getTypes()) == True:
-                        self.display.error(
-                            'Module \'%s\' disabled. One or more of the following module types were excluded %s' % (
-                                mod_name, _instance.getTypes()))
+                        True
+                        #self.display.error(
+                        #    'Module \'%s\' disabled. One or more of the following module types were excluded %s' % (
+                        #        mod_name, _instance.getTypes()))
                     else:
                         self.actionModules[mod_dispname] = _instance
                         for t in _instance.getTriggers():
@@ -403,9 +410,14 @@ class Framework():
                     self.inputModules[mod_dispname] = _instance
                 elif type == "report":
                     self.reportModules[mod_dispname] = _instance
-            else:
-                self.display.error(
-                    'Module \'%s\' disabled. Dependency required: \'%s\'' % (mod_name, _instance.getRequirements()))
+            #else:
+            #    self.display.error(
+            #        'Module \'%s\' disabled. Dependency required: \'%s\'' % (mod_name, _instance.getRequirements()))
+
+            if reasons:
+                self.display.error('Module \'%s\' disabled:' % mod_name)
+            for r in reasons:
+                self.display.error('     ' + r)
 
         except ImportError as e:
             # notify the user of missing dependencies
