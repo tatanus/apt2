@@ -13,6 +13,7 @@
 # see <http://www.gnu.org/licenses/>.
 
 import httplib
+import sys
 try:
     import msgpack
 except:
