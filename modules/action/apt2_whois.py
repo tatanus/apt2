@@ -16,8 +16,10 @@ class apt2_whois(actionModule):
         self.shortName = "Whois"
         self.description = "execute [whois] on each target"
 
+        self.types = ["osint"]
+
         self.requirements = []
-        self.triggers = ["newHostName", "newDomainName"]
+        self.triggers = ["newHostname", "newDomain"]
 
         self.safeLevel = 5
 
@@ -37,5 +39,5 @@ class apt2_whois(actionModule):
                 # make outfile
                 temp_file = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)
                 result = whois.whois(t)
-                Utils.writeFile(result.text(), temp_file)
+                Utils.writeFile(str(result), temp_file)
         return

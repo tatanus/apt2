@@ -460,8 +460,8 @@ class Framework():
                 for part in parts:
                     if part == "nmaprun":
                         return "nmap"
-
-        return ""
+        else:
+            return "dict"
 
     # ----------------------------
     # Main Menu
@@ -592,8 +592,9 @@ class Framework():
                 self.display.output("0. host")
                 self.display.output("1. service")
                 self.display.output("2. domain")
-                results = ["host", "service", "domain"]
-                i = 3  # Keep selection filter from breaking
+                self.display.output("3. osint")
+                results = ["host", "service", "domain", "osint"]
+                i = 4  # Keep selection filter from breaking
             self.display.output()
             self.display.output(
                 "Choose From Above Or: (a)dd, (d)elete, (b)ack, (m)ain menu, (i)mport, write to (t)emp file")

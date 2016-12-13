@@ -16,6 +16,8 @@ class apt2_ipwhois(actionModule):
         self.shortName = "IpWhois"
         self.description = "execute [ipwhois] on each target"
 
+        self.types = ["osint"]
+
         self.requirements = []
         self.triggers = ["newHost"]
 
@@ -38,5 +40,5 @@ class apt2_ipwhois(actionModule):
                 temp_file = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)
                 obj=ipwhois.IPWhois(t)
                 result = obj.lookup_rdap()
-                Utils.writeFile(result, temp_file)
+                Utils.writeFile(str(result), temp_file)
         return

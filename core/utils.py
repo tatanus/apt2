@@ -69,12 +69,13 @@ class Utils():
 
     @staticmethod
     def writeFile(text, filename):
-        fullfilename = os.path.abspath(filename)
-        if not os.path.exists(os.path.dirname(fullfilename)):
-            os.makedirs(os.path.dirname(fullfilename))
-        fp = open(fullfilename, "a")
-        fp.write(text)
-        fp.close()
+        if text:
+            fullfilename = os.path.abspath(filename)
+            if not os.path.exists(os.path.dirname(fullfilename)):
+                os.makedirs(os.path.dirname(fullfilename))
+            fp = open(fullfilename, "a")
+            fp.write(text)
+            fp.close()
 
     @staticmethod
     def validateExecutable(name):

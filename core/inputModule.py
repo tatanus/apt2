@@ -31,4 +31,5 @@ class inputModule(object):
         return self.process(inputfile)
 
     def fire(self, trigger):
-        EventHandler.fire(trigger)
+        EventHandler.fire(trigger + ":INPUTFile")
+

@@ -16,14 +16,16 @@ class apt2_shodan(actionModule):
         self.shortName = "Shodan"
         self.description = "execute [shodan] on each target"
 
+        self.types = ["osint"]
+
         self.requirements = ["sslscan", "APIKEY"]
-        self.triggers = ["newHost", "newDomainName", "newHostName"]
+        self.triggers = ["newHost", "newDomain", "newHostname"]
 
         self.safeLevel = 5
         self.targets2 = []
 
     def getTargets(self):
-        self.targets = kb.get(['osint/domainname', 'osint/hostname'])
+        self.targets = kb.get(['osint/domain', 'osint/hostname'])
         self.targets2 = kb.get('osint/host')
 
     def shodan_query(self, query):
@@ -42,7 +44,7 @@ class apt2_shodan(actionModule):
                 result = shodan_api_object.search(query=query, minify=True)
                 outputtext = ""
                 for t1 in result['matches']:
-                    outputtext = outputtext + "\n" + result['ip_str'] + " " + str(result['port']) + "/" + result['transport'] + " (" + result['_shodan']['module'] + ")"
+                    outputtext = outputtext + "\n" + t1['ip_str'] + " " + str(t1['port']) + "/" + t1['transport'] + " (" + t1['_shodan']['module'] + ")"
                 finished = True
             except shodan.exception.APIError as e:
                 if str(e) == "Unable to connect to Shodan":
