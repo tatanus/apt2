@@ -367,6 +367,11 @@ class Framework():
             for r in _instance.getRequirements():
                 if r == 'disable':
                     reasons.append("Module Manually Disabled !!!")
+                elif r == 'APIKEY':
+                    key_name = mod_name + "_apikey"
+                    if not key_name in self.config:
+                        reasons.append("API key is missing")
+                        valid = False
                 elif not r in self.config:
                     path = Utils.validateExecutable(r)
                     if path:
