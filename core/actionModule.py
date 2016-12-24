@@ -50,6 +50,9 @@ class actionModule(object):
     def getMaxThreads(self):
         return self.maxThreads
 
+    def getVector(self):
+        return self.vector
+
     def process(self):
         return
 
@@ -61,6 +64,9 @@ class actionModule(object):
 
     def fire(self, trigger):
         EventHandler.fire(trigger + ":" + self.vector + "-" + self.shortName)
+
+    def getVectorDepth(self):
+        return len(self.vector.split('-'))
 
     def pktCap(self, filter="", packetcount=10, timeout=60, srcip="", dstip=""):
         pool = ThreadPool(processes=1)

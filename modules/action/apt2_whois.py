@@ -27,6 +27,10 @@ class apt2_whois(actionModule):
         self.targets = kb.get(['osint/hostname', 'osint/domain'])
 
     def process(self):
+        # early out if the osint depth is reached
+        if (int(self.getVectorDepth()) > int(self.config['max_osint_depth'])):
+            return
+
         # load any targets we are interested in
         self.getTargets()
 
@@ -39,5 +43,12 @@ class apt2_whois(actionModule):
                 # make outfile
                 temp_file = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)
                 result = whois.whois(t)
+                address = result['address']
+                if address:
+                    kb.add("osint/address/" + address
+                emails = result['emails']
+                if emails:
+                    for email in emails:
+                        kb.add("osint/email/" + email
                 Utils.writeFile(str(result), temp_file)
         return

@@ -21,6 +21,8 @@ class apt2_shodan(actionModule):
         self.requirements = ["sslscan", "APIKEY"]
         self.triggers = ["newHost", "newDomain", "newHostname"]
 
+        self.maxThreads = 1
+
         self.safeLevel = 5
         self.targets2 = []
 
@@ -29,6 +31,10 @@ class apt2_shodan(actionModule):
         self.targets2 = kb.get('osint/host')
 
     def shodan_query(self, query):
+        # early out if the osint depth is reached
+        if (int(self.getVectorDepth()) > int(self.config['max_osint_depth'])):
+            return
+
         max_attempts = 5
 
         shodan_api_object = shodan.Shodan(self.config['apt2_shodan_apikey'])
