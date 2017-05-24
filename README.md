@@ -62,7 +62,7 @@ Configure the number of the threads APT2 will use.
 #### Import Nexpose, Nessus, or NMap XML
 `apt2 -f <nmap.xml>`
 #### Specify Target Range to Start
-`apt2 -f 192.168.1.0/24`
+`apt2 --target 192.168.1.0/24`
 
 ## Safe Level
 Safe levels indicate how safe a module is to run againsts a target. The scale runs from 1 to 5 with 5 being the safest. The default configuration uses a Safe Level of 4 but can be set with the `-s` or `--safelevel` command line flags.
