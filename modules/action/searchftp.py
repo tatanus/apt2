@@ -54,10 +54,9 @@ class searchftp(actionModule):
         except ftputil.error.PermanentError:
             self.display.error("Could not connect to %s on port 21" % (target))
 
-#        outfile = self.config["proofsDir"] + self.shortName + "_PCAP_Port" + str(
-#            port) + "_" + target + "_" + Utils.getRandStr(10)
+#        outfile = self.config["proofsDir"] + self.shortName + "_PCAP_Port" + str(port) + "_" + target + "_" + Utils.getRandStr(10)
 #        Utils.writeFile(self.getPktCap(cap), outfile)
-        kb.add("host/" + target + "/files/" + self.shortName + "/" + outfile.replace("/", "%2F"))
+#        kb.add("host/" + target + "/files/" + self.shortName + "/" + outfile.replace("/", "%2F"))
         return success
 
     def testTarget(self, host, port):
