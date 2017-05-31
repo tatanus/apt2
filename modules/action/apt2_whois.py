@@ -1,5 +1,3 @@
-import re
-import sys
 try:
     import whois
 except ImportError:
@@ -45,10 +43,10 @@ class apt2_whois(actionModule):
                 result = whois.whois(t)
                 address = result['address']
                 if address:
-                    kb.add("osint/address/" + address
+                    kb.add("osint/address/" + address)
                 emails = result['emails']
                 if emails:
                     for email in emails:
-                        kb.add("osint/email/" + email
+                        kb.add("osint/email/" + email)
                 Utils.writeFile(str(result), temp_file)
         return

@@ -30,12 +30,7 @@ All module results are stored on localhost and are part of APT2's Knowledge Base
 ***NOTE:*  APT2 is currently only tested on Linux based OSes.  If you can confirm that it works on other OSes, please let us know.**
 
 On Kali Linux install python-nmap library:
-- pip install python-nmap
-- pip install pysmb
-- pip install yattag
-- pip install scapy
-- pip install ftputil
-- pip install msgpack-python
+python setup.py install
 
 ## Current External Program/Script Dependencies
 To make full use of all of APT2's modules, the following external dependencies should be install on your system:
@@ -61,13 +56,13 @@ Configure the number of the threads APT2 will use.
 
 ## Run:
 #### No Options:
-`python apt2` or `./apt2`
+`apt2`
 #### With Configuration File
-`python apt2 -C <config.txt>`
+`apt2 -C <config.txt>`
 #### Import Nexpose, Nessus, or NMap XML
-`python apt2 -f <nmap.xml>`
+`apt2 -f <nmap.xml>`
 #### Specify Target Range to Start
-`python apt2 -f 192.168.1.0/24`
+`apt2 -f 192.168.1.0/24`
 
 ## Safe Level
 Safe levels indicate how safe a module is to run againsts a target. The scale runs from 1 to 5 with 5 being the safest. The default configuration uses a Safe Level of 4 but can be set with the `-s` or `--safelevel` command line flags.

@@ -6,15 +6,9 @@
 apt-get update
 apt-get upgrade
 apt-get install git python-pip
-pip install python-mmap
-pip install pysmb
-pip install yattag
-pip install scapy
-pip install ftputil
-pip install msgpack-python
-
 # git clone https://github.com/MooseDojo/apt2.git
 # cd apt2
+# python setup.py install
 # ./apt2.py -h
 # ./apt2.py -b
 
