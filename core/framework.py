@@ -100,29 +100,6 @@ class Framework():
         self.config["miscDir"] = self.config["outDir"] + "misc/"
 
     # ----------------------------
-    # Check the current Version
-    # ----------------------------
-    def versionCheck(self):
-        try:
-            pattern = "'(\d+\.\d+\.\d+[^']*)'"
-        #    # Get the VERSION that exists on Github
-        #    remote = re.search(pattern, self.request('https://raw.githubusercontent.com/moosedojo/apt2/master/VERSION').raw).group(1)
-            # Get the version that is local
-            local = re.search(pattern, open('VERSION').read()).group(1)
-            self.version = local
-        #    if remote != local:
-        #        self.display.alert('Your version of %s does not match the latest release.' % self.progName)
-        #        self.display.alert('Please update or use the \'--no-check\' switch to continue using the old version.')
-        #        if remote.split('.')[0] != local.split('.')[0]:
-        #            self.display.alert('Read the migration notes for pre-requisites before upgrading.')
-        #        self.display.output('Remote version:  %s' % (remote))
-        #        self.display.output('Local version:   %s' % (local))
-        #        self.cleanup()
-        except:
-            self.cleanup()
-        return
-
-    # ----------------------------
     # CTRL-C display and exit
     # ----------------------------
     def ctrlc(self):
@@ -359,12 +336,13 @@ class Framework():
 
         # remove the beginning string of the dirpath
         basepath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        dirpath_orig = dirpath
         dirpath = dirpath[len(basepath)+1:]
 
         mod_name = filename.split('.')[0]
         mod_dispname = '/'.join(re.split('/modules/' + type + "/", dirpath)[-1].split('/') + [mod_name])
         mod_loadname = mod_dispname.replace('/', '_')
-        mod_loadpath = os.path.join(dirpath, filename)
+        mod_loadpath = os.path.join(dirpath_orig, filename)
         mod_file = open(mod_loadpath)
         try:
             # import the module into memory
@@ -702,7 +680,6 @@ class Framework():
     def run(self, argv):
         #os.system('clear')
         self.parseParameters(argv)
-        self.versionCheck()  #check the local version against the remote version
         self.displayBanner() #Print banner first and all messages after
         self.loadConfig() # load config
         modules_dict = self.loadModules() # load input/action modules
