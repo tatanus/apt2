@@ -250,12 +250,15 @@ class Framework():
         self.config['lhost'] = args.lhost
         self.config["bypass_menu"] = args.bypass_menu
         for f in args.inputs:
-            type = self.idFileType(f)
-            if (type):
-                if type in self.inputs:
-                    self.inputs[type].append(f)
-                else:
-                    self.inputs[type] = [f]
+            if (Utils.isReadable(f)):
+                type = self.idFileType(f)
+                if (type):
+                    if type in self.inputs:
+                        self.inputs[type].append(f)
+                    else:
+                        self.inputs[type] = [f]
+            else:
+                print "Can not access [" + f + "]"
 
     # ----------------------------
     # Load config setting from the config file
@@ -304,7 +307,6 @@ class Framework():
         # crawl the module directory and build the module tree
         # process inputs
         path = os.path.join(self.config["pkgDir"], 'modules/input')
-        print path
         for dirpath, dirnames, filenames in os.walk(path):
             # remove hidden files and directories
             filenames = [f for f in filenames if not f[0] == '.']
