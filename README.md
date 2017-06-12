@@ -69,7 +69,7 @@ Safe levels indicate how safe a module is to run againsts a target. The scale ru
 
 ## Usage:
 ```
-usage: apt2.py [-h] [-C <config.txt>] [-f [<input file> [<input file> ...]]]
+usage: apt2 [-h] [-C <config.txt>] [-f [<input file> [<input file> ...]]]
                [--target] [--ip <local IP>] [-v] [-s SAFE_LEVEL] [-b]
                [--listmodules]
 
