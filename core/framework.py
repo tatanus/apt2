@@ -12,6 +12,7 @@ from mynmap import mynmap
 from mymsf import myMsf
 from threading import RLock, Thread
 from keyeventthread import KeyEventThread
+from os.path import expanduser
 
 
 class Framework():
@@ -31,11 +32,13 @@ class Framework():
 
         self.config = {}
 
-        self.config["outDir"] = os.getcwd() + "/"
+        self.config["homeDir"] = expanduser("~")
+        self.config["outDir"] = self.config["homeDir"] + "/.apt2/"
         self.config["reportDir"] = ""
         self.config["logDir"] = ""
         self.config["proofsDir"] = ""
         self.config["tmpDir"] = ""
+        self.config["pkgDir"] = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         self.config["miscDir"] = ""
         self.config['lhost'] = Utils.getIP()
 
@@ -72,6 +75,9 @@ class Framework():
     # ----------------------------
     def setupDirs(self):
         # make directories
+        if not os.path.isdir(self.config["outDir"]):
+            os.makedirs(self.config["outDir"])
+
         if not os.path.isdir(self.config["outDir"] + "reports/"):
             os.makedirs(self.config["outDir"] + "reports/")
         self.config["reportDir"] = self.config["outDir"] + "reports/"
@@ -89,8 +95,8 @@ class Framework():
             os.makedirs(self.config["outDir"] + "tmp/")
         self.config["tmpDir"] = self.config["outDir"] + "tmp/"
 
-        if not os.path.isdir(self.config["outDir"] + "misc/"):
-            os.makedirs(self.config["outDir"] + "misc/")
+        if not os.path.isdir(self.config["pkgDir"] + "misc/"):
+            os.makedirs(self.config["pkgDir"] + "misc/")
         self.config["miscDir"] = self.config["outDir"] + "misc/"
 
     # ----------------------------
@@ -297,7 +303,8 @@ class Framework():
         module_dict = {}
         # crawl the module directory and build the module tree
         # process inputs
-        path = os.path.join(sys.path[0], 'modules/input')
+        path = os.path.join(self.config["pkgDir"], 'modules/input')
+        print path
         for dirpath, dirnames, filenames in os.walk(path):
             # remove hidden files and directories
             filenames = [f for f in filenames if not f[0] == '.']
@@ -308,7 +315,7 @@ class Framework():
                     if module is not None:
                         module_dict[module['name'].rstrip(" ")] = module
         # process actions
-        path = os.path.join(sys.path[0], 'modules/action')
+        path = os.path.join(self.config["pkgDir"], 'modules/action')
         for dirpath, dirnames, filenames in os.walk(path):
             # remove hidden files and directories
             filenames = [f for f in filenames if not f[0] == '.']
@@ -319,7 +326,7 @@ class Framework():
                     if module is not None:
                         module_dict[module['name'].rstrip(" ")] = module
         # process reports
-        path = os.path.join(sys.path[0], 'modules/report')
+        path = os.path.join(self.config["pkgDir"], 'modules/report')
         for dirpath, dirnames, filenames in os.walk(path):
             # remove hidden files and directories
             filenames = [f for f in filenames if not f[0] == '.']
@@ -347,6 +354,10 @@ class Framework():
     # ----------------------------
     def loadModule(self, type, dirpath, filename):
         module_dict = {}
+
+        # remove the beginning string of the dirpath
+        basepath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        dirpath = dirpath[len(basepath)+1:]
 
         mod_name = filename.split('.')[0]
         mod_dispname = '/'.join(re.split('/modules/' + type + "/", dirpath)[-1].split('/') + [mod_name])

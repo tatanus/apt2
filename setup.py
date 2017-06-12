@@ -11,8 +11,8 @@ setup(
     name='apt2',
     version='1.0.0',
     description='APT2 - An Automated Penetration Testing Toolkit',
-    long_description='This tool will perform an NMap scan, or import the results of a scan from Nexpose, Nessus, or '
-                     'NMap. The processesd results will be used to launch exploit and enumeration modules according to '
+    long_description='This tool will perform an NMap scan or import the results of a scan from an external scanning'
+                     'tool. The processesd results will be used to launch exploit and enumeration modules according to '
                      'the configurable Safe Level and enumerated service information.',
     url='https://github.com/MooseDojo/apt2',
     author='Adam Compton & Austin Lane',
@@ -26,7 +26,7 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
     ],
-    keywords='apt2 nmap pentesting automation',
+    keywords='apt2 pentesting automation',
     packages=find_packages(),
     package_data={
         'misc': ['TestSSLServer.jar', 'passwords.txt', 'multihandler.rc', 'capture.js'],
