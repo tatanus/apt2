@@ -38,7 +38,7 @@ To make full use of all of APT2's modules, the following external dependencies s
 convert, dirb, hydra, java, john, ldapsearch, msfconsole, nmap, nmblookup, phantomjs, responder, rpcclient, secretsdump.py, smbclient, snmpwalk, sslscan, xwd
 
 ## Configuration (Optional)
-APT2 uses the *default.cfg* file in the root directory. Edit this file to configure APT2 to run as you desire.
+APT2 uses the *default.cfg* file in the misc directory. Edit this file to configure APT2 to run as you desire.
 
 Current options include:
 - metasploit

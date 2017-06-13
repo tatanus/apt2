@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 
-
+import os
 from os import path
-
 from setuptools import setup, find_packages
 
 here = path.abspath(path.dirname(__file__))
 
+datadir = os.path.join('.','misc')
+datafiles = [(d, [os.path.join(d,f) for f in files])
+            for d, folders, files in os.walk(datadir)]
 setup(
     name='apt2',
     version='1.0.0',
@@ -28,9 +30,7 @@ setup(
     ],
     keywords='apt2 pentesting automation',
     packages=find_packages(),
-    package_data={
-        'misc': ['TestSSLServer.jar', 'passwords.txt', 'multihandler.rc', 'capture.js'],
-    },
+    data_files = datafiles,
     install_requires=[
         'python-nmap',
         'pysmb',
@@ -47,4 +47,5 @@ setup(
             'apt2=apt2:main',
         ],
     },
+    include_package_data=True,
 )

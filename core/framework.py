@@ -3,6 +3,11 @@ import imp
 import os
 import re
 import sys
+import pkg_resources
+
+from threading import RLock, Thread
+from keyeventthread import KeyEventThread
+from os.path import expanduser
 
 # import our libs
 from utils import Utils, Display
@@ -10,10 +15,6 @@ from keystore import KeyStore as kb
 from events import EventHandler
 from mynmap import mynmap
 from mymsf import myMsf
-from threading import RLock, Thread
-from keyeventthread import KeyEventThread
-from os.path import expanduser
-
 
 class Framework():
     def __init__(self):
@@ -25,7 +26,7 @@ class Framework():
         self.reportModules = {}
 
         self.progName = "APT2"
-        self.version = "error"
+        self.version = pkg_resources.get_distribution("apt2").version
         self.isRunning = True  # Conditional to check if user wants to quit
 
         self.inputs = {}
@@ -38,7 +39,7 @@ class Framework():
         self.config["logDir"] = ""
         self.config["proofsDir"] = ""
         self.config["tmpDir"] = ""
-        self.config["pkgDir"] = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        self.config["pkgDir"] = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + "/"
         self.config["miscDir"] = ""
         self.config['lhost'] = Utils.getIP()
 
@@ -97,7 +98,7 @@ class Framework():
 
         if not os.path.isdir(self.config["pkgDir"] + "misc/"):
             os.makedirs(self.config["pkgDir"] + "misc/")
-        self.config["miscDir"] = self.config["outDir"] + "misc/"
+        self.config["miscDir"] = self.config["pkgDir"] + "misc/"
 
     # ----------------------------
     # CTRL-C display and exit
@@ -248,10 +249,10 @@ class Framework():
             self.config = dict(temp2.items() + temp1.items())
         else:
             # guess not..   so try to load the default one
-            if Utils.isReadable("default.cfg"):
+            if Utils.isReadable(self.config["miscDir"] + "default.cfg"):
                 self.display.verbose("a CONFIG FILE was not specified...  defaulting to [default.cfg]")
                 temp1 = self.config
-                temp2 = Utils.loadConfig("default.cfg")
+                temp2 = Utils.loadConfig(self.config["miscDir"] + "default.cfg")
                 self.config = dict(temp2.items() + temp1.items())
             else:
                 # someone must have removed it!
