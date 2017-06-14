@@ -27,6 +27,10 @@ class Framework():
 
         self.progName = "APT2"
         self.version = pkg_resources.get_distribution("apt2").version
+        if Utils.isReadable('VERSION'):
+            version_pattern = "'(\d+\.\d+\.\d+[^']*)'"
+            self.version = re.search(version_pattern, open('VERSION').read()).group(1)
+
         self.isRunning = True  # Conditional to check if user wants to quit
 
         self.inputs = {}
