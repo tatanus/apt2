@@ -26,7 +26,12 @@ class Framework():
         self.reportModules = {}
 
         self.progName = "APT2"
-        self.version = pkg_resources.get_distribution("apt2").version
+        self.version = "None"
+        try:
+            self.version = pkg_resources.get_distribution("apt2").version
+        except:
+            None
+
         if Utils.isReadable('VERSION'):
             version_pattern = "'(\d+\.\d+\.\d+[^']*)'"
             self.version = re.search(version_pattern, open('VERSION').read()).group(1)
