@@ -71,12 +71,36 @@ class KeyStore(object):
                 print key, '=>', value
         return
 
+    # dump keystore to text
+    @staticmethod
+    def dump():
+        dump = ""
+        with KeyStore.db.cursor() as cursor:
+            for key, values in cursor:
+                values = ast.literal_eval(values)
+                for value in values:
+                    dump += "\n" + key + "/" + value
+        return dump
+
+    # save keystore to file
+    @staticmethod
+    def save(filename):
+        Utils.writeFile(Keystore.dump(), filename)
+        return
+
+    # load keystore from file
+    @staticmethod
+    def load(filename):
+        lines = Utils.readFile(filename)
+        for line in lines:
+            KeyStore.add(line)
+        return
+
 # -----------------------------------------------------------------------------
 # main test code
 # -----------------------------------------------------------------------------
 if __name__ == "__main__":
     print "-------------------------------------------------------------------"
-    KeyStore.debug()
     #    KeyStore.add("host/1.2.3.4/port/111")
     #    KeyStore.add("host/a.b.c.d/port/80")
     #    KeyStore.add("host/a.b.c.d/port/80/bob")
@@ -91,8 +115,10 @@ if __name__ == "__main__":
     KeyStore.add("host/4.4.4.4/port/25")
     print "-------------------------------------------------------------------"
     KeyStore.debug()
+    print KeyStore.dump()
 
     print KeyStore.get("host/*/port/80")
+    print KeyStore.get("host")
 #    KeyStore.add("service/http/host/1.1.1.1/tcpport/80/product/apache/version/1.1.1.1.1.1.1")
 #    KeyStore.add("service/http/host/1.1.1.1/tcpport/8080/product/apache/version/1.1.1.3.3.3.3")
 #    KeyStore.add("service/https/host/2.2.2.2/tcpport/443/product/nginx/version/a.b.c.d")
@@ -103,94 +129,3 @@ if __name__ == "__main__":
 #    KeyStore.debug()
 
 #    print KeyStore.get("service")
-#    print KeyStore.get("service/smtp/host/4.4.4.4/tcpport/25/product/sendmail/version")
-#    print json.dumps(kb, sort_keys=True, indent=4)
-
-# print "=========  PORT 80  ========="
-#    print " SHOULD BE 1.1.1.1 2.2.2.2"
-#    kb=KeyStore.get("host/*/port/80")
-#    print json.dumps(kb, sort_keys=True, indent=4)
-#    print "=========  PORT 443  ========="
-#    print " SHOULD BE 2.2.2.2"
-#    kb=KeyStore.get("host/*/port/443")
-#    print json.dumps(kb, sort_keys=True, indent=4)
-#    print "=========  PORT 8080  ========="
-#    print " SHOULD BE 1.1.1.1"
-#    kb=KeyStore.get("host/*/port/8080")
-#    print json.dumps(kb, sort_keys=True, indent=4)
-#    print "=========  SERVICE HTTP  ========="
-#    print " SHOULD BE 1.1.1.1 2.2.2.2"
-#    kb=KeyStore.get("service/http/host")
-#    print json.dumps(kb, sort_keys=True, indent=4)
-#    print "=========  SERVICE HTTPS  ========="
-#    kb=KeyStore.get("service/https/host")
-#    print " SHOULD BE 2.2.2.2"
-#    print json.dumps(kb, sort_keys=True, indent=4)
-#
-#    print "=========  PORT 80 and SERVICE HTTP  ========="
-#    print " SHOULD BE 1.1.1.1 2.2.2.2"
-#    kb=KeyStore.get(["service/http/host", "host/*/port/80"])
-#    print json.dumps(kb, sort_keys=True, indent=4)
-##    for t in kb:
-##        print
-##        print t
-##        kb2 = KeyStore.get('service/http/host/' + t + '/tcpport')
-##        print json.dumps(kb2, sort_keys=True, indent=4)
-#
-#    print "=========  PORT 443 and SERVICE HTTPS  ========="
-#    print " SHOULD BE 2.2.2.2"
-#    kb=KeyStore.get(["service/https/host", "host/*/port/443"])
-#    print json.dumps(kb, sort_keys=True, indent=4)
-##    for t in kb:
-##        print
-##        print t
-##        kb2 = KeyStore.get('service/https/host/' + t + '/tcpport')
-##        print json.dumps(kb2, sort_keys=True, indent=4)
-#
-##    KeyStore.debug(kb=KeyStore.get("host/*/port"))
-#    #KeyStore.rm("host/a.b.c.d/port/80")
-#    #KeyStore.debug(kb=KeyStore.get("host/*/port"))
-##    kb=KeyStore.get(["host/*/port/80", "host/*/port/111"])
-##    KeyStore.debug(kb=KeyStore.get("host/*/port/80"))
-##    KeyStore.debug(kb=KeyStore.get("host/*/port/111"))
-##    kb=KeyStore.get(["host/*/port/111"])
-#
-##    print "-----------------------------"
-##    kb=KeyStore.get("host/a.b.c.d/port")
-##    print json.dumps(kb, sort_keys=True, indent=4)
-##    print "-----------------------------"
-##    kb=KeyStore.get("host/a.b.c.d/port/80")
-##    print json.dumps(kb, sort_keys=True, indent=4)
-##    print "-----------------------------"
-##    kb=KeyStore.get("host/a.b.c.d/port/80/apple")
-##    print json.dumps(kb, sort_keys=True, indent=4)
-##    print "-----------------------------"
-##    kb=KeyStore.get("host/a.b.c.d/port/80/dog")
-##    print json.dumps(kb, sort_keys=True, indent=4)
-##    print "-----------------------------"
-##    kb=KeyStore.get(["host/a.b.c.d/port/80/apple"])
-##    print json.dumps(kb, sort_keys=True, indent=4)
-##    print "-----------------------------"
-##    kb=KeyStore.get(["host/*/port/80"])
-##    print json.dumps(kb, sort_keys=True, indent=4)
-##    print "-----------------------------"
-##    kb=KeyStore.get(["host/*/port/111"])
-##    print json.dumps(kb, sort_keys=True, indent=4)
-##    print "-----------------------------"
-##    kb=KeyStore.get(["host/*/port/80", "host/*/port/111"])
-##    print json.dumps(kb, sort_keys=True, indent=4)
-##    print "-----------------------------"
-##    kb=KeyStore.get(["host/*/port/80/apple"])
-##    print json.dumps(kb, sort_keys=True, indent=4)
-##    print "-----------------------------"
-#
-##    KeyStore.debug(kb = kb)
-##    for t in kb:
-##        print t
-##        print kb[t]
-##    KeyStore.debug()
-#    KeyStore.save("out.save")
-##    KeyStore.xml()
-#    #KeyStore.debug()
-#    #KeyStore.load("out.save")
-#    #KeyStore.debug()
