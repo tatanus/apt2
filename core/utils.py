@@ -69,6 +69,8 @@ class Utils():
 
     @staticmethod
     def writeFile(text, filename):
+        if not Utils.isWriteable(filename):
+            return
         if text:
             fullfilename = os.path.abspath(filename)
             if not os.path.exists(os.path.dirname(fullfilename)):
@@ -76,6 +78,15 @@ class Utils():
             fp = open(fullfilename, "a")
             fp.write(text)
             fp.close()
+
+    @staticmethod
+    def readFile(filename):
+        text = list()
+        if not Utils.isReadable(filename):
+            return text
+        with open(filename) as f:
+            text = f.read().splitlines()
+        return text
 
     @staticmethod
     def validateExecutable(name):

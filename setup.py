@@ -41,6 +41,8 @@ setup(
         'click', # fix issue with shodan installation
         'shodan',
         'ipwhois',
+        'unqlite',
+        'whois',
     ],
     entry_points={
         'console_scripts': [
