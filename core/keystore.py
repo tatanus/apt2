@@ -1,5 +1,8 @@
 import ast
-from unqlite import UnQLite
+try:
+    from unqlite import UnQLite
+except:
+    sys.exit("[!] Install the msgpack library: pip install unqlite") 
 
 from utils import Utils
 
