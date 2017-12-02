@@ -12,7 +12,31 @@ class KeyStore(object):
     # =================================================
     # "private" mathods
     # =================================================
-    
+
+    # get the list of values for a given key
+    @staticmethod
+    def _get(item):
+        item = item.rstrip('/')
+        values = list()
+
+        # does the request contain a wild card value?
+        if "/*/" in item:
+            parts = item.split("*")
+            left = parts[0].split()[-1]
+            right = parts[1].split()[0] if parts[1].split() else ''
+
+            temp_vals = KeyStore.get(left)
+            if (isinstance(temp_vals, basestring)):
+                temp_vals = ast.literal_eval(temp_vals)
+            for temp_val in temp_vals:
+                if left + temp_val + right in KeyStore.db:
+                    values.append(temp_val)
+        else:
+            if item in KeyStore.db:
+                values = KeyStore.db[item]
+
+        return values
+
     # =================================================
     # "public" methods
     # =================================================
@@ -27,8 +51,9 @@ class KeyStore(object):
             (key, value) = item.rsplit('/', 1)
             values = list()
             if key in KeyStore.db:
-                values = KeyStore.get(key)
-                values = ast.literal_eval(values)
+                values = KeyStore._get(key)
+                if (isinstance(values, basestring)):
+                    values = ast.literal_eval(values)
             if value not in values:
                 values.append(value)
                 KeyStore.db[key] = values
@@ -37,26 +62,19 @@ class KeyStore(object):
     # return a list of values for a given key
     @staticmethod
     def get(item):
-        item = item.rstrip('/')
-        values = list()
+        result = list()
 
-        # does the request contain a wild card value?
-        if "/*/" in item:
-            parts = item.split("*")
-            left = parts[0].split()[-1]
-            right = parts[1].split()[0] if parts[1].split() else ''
-
-            #(left, right) = item.split("*", 1)
-            temp_vals = KeyStore.get(left)
-            temp_vals = ast.literal_eval(temp_vals)
-            for temp_val in temp_vals:
-                if left + temp_val + right in KeyStore.db:
-                    values.append(temp_val)
-        else:
-            if item in KeyStore.db:
-                values = KeyStore.db[item]
-
-        return values
+        # are we processin just one lookup?
+        if (isinstance(item, basestring)):
+            result = KeyStore._get(item)
+            if (isinstance(result, basestring)):
+                result = ast.literal_eval(result)
+        # or are we processing 2 lookups?
+        elif (isinstance(item, list)):
+            for k in item:
+                r2 = KeyStore.get(k)
+                result = result.extend(r2)
+        return sorted(set(result))
 
     # remove a given key or value
     @staticmethod
@@ -114,8 +132,8 @@ if __name__ == "__main__":
     KeyStore.add("host/3.3.3.3/port/22")
     KeyStore.add("host/4.4.4.4/port/25")
     print "-------------------------------------------------------------------"
-    KeyStore.debug()
-    print KeyStore.dump()
+    #KeyStore.debug()
+    #print KeyStore.dump()
 
     print KeyStore.get("host/*/port/80")
     print KeyStore.get("host")
