@@ -73,8 +73,14 @@ class KeyStore(object):
         elif (isinstance(item, list)):
             for k in item:
                 r2 = KeyStore.get(k)
-                result = result.extend(r2)
-        return sorted(set(result))
+                if r2:
+                    if result:
+                        result = result.extend(r2)
+                    else:
+                        result = r2
+        if result:
+            return sorted(set(result))
+        return []
 
     # remove a given key or value
     @staticmethod
@@ -103,7 +109,7 @@ class KeyStore(object):
     # save keystore to file
     @staticmethod
     def save(filename):
-        Utils.writeFile(Keystore.dump(), filename)
+        Utils.writeFile(KeyStore.dump(), filename)
         return
 
     # load keystore from file

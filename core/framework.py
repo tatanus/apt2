@@ -720,7 +720,8 @@ class Framework():
         while self.isRunning:
             self.displayMenu()
 
-        kb.save(self.kbSaveFile)
+        if (kb):
+            kb.save(self.kbSaveFile)
 
         # generate reports
         self.display.output("Generating Reports")
