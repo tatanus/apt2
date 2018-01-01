@@ -46,7 +46,7 @@ Current options include:
 - threading
 
 ##### Metasploit RPC API (metasploit)
-APT2 can utuilize your host's Metasploit RPC interface (MSGRPC). Additional Information can be found here: https://help.rapid7.com/metasploit/Content/api-rpc/getting-started-api.html
+APT2 can utuilize your host's Metasploit RPC interface (MSGRPC). Additional Information can be found here: https://metasploit.help.rapid7.com/v1.1/docs/rpc-api
 
 ##### NMAP
 Configure NMAP scan settings to include the target, scan type, scan port range, and scan flags. These settings can be configured while the program is running.
