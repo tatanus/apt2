@@ -5,7 +5,7 @@ from core.mynmap import mynmap
 class scan_nmap_ms08067scan(actionModule):
     def __init__(self, config, display, lock):
         super(scan_nmap_ms08067scan, self).__init__(config, display, lock)
-        self.title = "NMap MS08-067 Scan"
+        self.title = "Nmap MS08-067 Scan"
         self.shortName = "NmapMS08067Scan"
         self.description = "execute [nmap --script smb-vuln-ms08-067.nse -p445] on each target"
 
@@ -15,11 +15,20 @@ class scan_nmap_ms08067scan(actionModule):
         self.safeLevel = 4
 
     def getTargets(self):
-        self.targets = kb.get(['port/tcp_139/ip', 'port/tcp_445/ip'])
+        self.targets = kb.get('port/tcp_139/ip', 'port/tcp_445/ip')
 
-    def myProcessHostScript(self, host, script):
-        print script.attrib['id']
-        print script.attrib['output']
+    def myProcessHostScript(self, host, script, outfile):
+        outfile = outfile + ".xml"
+        scriptid = script.attrib['id']
+        output = script.attrib['output']
+        if (scriptid == "smb-vuln-ms08-067"):
+            for table in script.findall('table'):
+                for elem in table.findall('elem'):
+                    if elem.attrib['key'] == "state":
+                        if ("VULNERABLE" in elem.text) or ("INFECTED" in elem.text):
+                            self.addVuln(host, "smb-vuln-ms08-067", {"port": "445", "output": outfile.replace("/", "%2F")})
+                            self.fire("ms08-067")
+                            self.display.error("VULN [MS08-067] Found on [%s]" % host)
 
     def process(self):
         # load any targets we are interested in

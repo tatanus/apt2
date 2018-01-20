@@ -20,7 +20,7 @@ class scan_nmap_smbshares(actionModule):
         self.safeLevel = 5
 
     def getTargets(self):
-        self.targets = kb.get(['port/tcp_139/ip', 'port/tcp_445/ip'])
+        self.targets = kb.get('port/tcp_139/ip', 'port/tcp_445/ip')
 
     def process(self):
         # load any targets we are interested in

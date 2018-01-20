@@ -44,7 +44,7 @@ class reportgen(reportModule):
 
     def getTargets(self):
         # we are interested in all hosts
-        self.targets = kb.get(['host'])
+        self.targets = kb.get('host')
 
     def processTarget(self, t, port):
         # do nothing

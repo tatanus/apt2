@@ -55,7 +55,7 @@ class mynmap():
                     self.processOs(hostip, host.find('os'))
                 for hostscript in host.findall('hostscript'):
                     for script in hostscript.findall('script'):
-                        self.hostScriptFunc (hostip, script)
+                        self.hostScriptFunc (hostip, script, self.outfile)
                 if host.find('ports'):
                     for port in host.find('ports').findall('port'):
                         self.processPort(hostip, port)
@@ -110,7 +110,7 @@ class mynmap():
             self.processService(host, portnum, proto, port.find('service'))
     
             for script in port.findall('script'):
-                self.portScriptFunc (host, portnum, proto, script)
+                self.portScriptFunc (host, portnum, proto, script, self.outfile)
     
     def processService(self, host, port, proto, service):
         name = ""
@@ -132,7 +132,7 @@ class mynmap():
         kb.add('service/' + name + '/' + host + '/' + proto + '_' + port + '/version/' + product + ' ' + version)
         EventHandler.fire("newService_" + name + ":" + self.vector)
     
-    def processHostScript(self, host, script):
+    def processHostScript(self, host, script, outfile):
 #        print script.attrib['id']
 #        print script.attrib['output']
 #        for child in script:
@@ -141,7 +141,7 @@ class mynmap():
 #            print child.attrib
         return
     
-    def processScript(self, host, port, proto, script):
+    def processScript(self, host, port, proto, script, outfile):
 #        print script.attrib['id']
 #        print script.attrib['output']
 #        for child in script:

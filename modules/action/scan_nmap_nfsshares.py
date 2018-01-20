@@ -19,7 +19,50 @@ class scan_nmap_nfsshares(actionModule):
         self.safeLevel = 5
 
     def getTargets(self):
-        self.targets = kb.get(['port/tcp_111/ip', 'port/udp_111/ip'])
+        self.targets = kb.get('port/tcp_111/ip', 'port/udp_111/ip')
+
+    def myProcessPortScript(self, host, proto, port, script, outfile):
+        outfile = outfile + ".xml"
+        scriptid = script.attrib['id']
+        output = script.attrib['output']
+        if (scriptid == "nfs-ls"):
+            readAccess = False
+            writeAccess = False
+            for volumes in script.findall("table"):
+                for volume in volumes.findall("table"):
+                    sharename = ""
+                    shareinfo = ""
+                    files = {}
+                    for elem in volume:
+                        if elem.attrib["key"] == "volume":
+                            sharename = elem.text.replace("/", "%2F")
+                        if elem.attrib["key"] == "info":
+                            rights = elem[0].text
+                            if "Read" in rights:
+                                readAccess = True
+                            if "Modify" in rights:
+                                writeAccess = True
+                            shareinfo = rights.replace("/", "%2F")
+                        if elem.attrib["key"] == "files":
+                            for file in elem:
+                                newfile = {}
+                                for fileprop in file:
+                                    newfile[fileprop.attrib["key"]] = fileprop.text
+                                files[newfile["filename"]] = newfile
+                    kb.add("share/nfs/" + sharename + "/" + host + "/" + str("Info: " + shareinfo))
+#                    for file in files:
+#                        # TODO - Maybe revisit adding more file properties here in addition to names
+#                        kb.add("host/" + host + "/shares/NFS/" + sharename + "/Files/" + str(file).replace("/", "%2F"))
+#                        print ("host/" + host + "/shares/NFS/" + sharename + "/Files/" + str(file).replace("/", "%2F"))
+
+            if readAccess:
+                self.addVuln(host, "nfs-read", {"port": "111", "output": outfile.replace("/", "%2F")})
+                self.fire("nfsRead")
+                self.display.error("VULN [NFS Share - Read Access] Found on [%s]" % host)
+            if writeAccess:
+                self.addVuln(host, "nfs-write", {"port": "111", "output": outfile.replace("/", "%2F")})
+                self.fire("nfsWrite")
+                self.display.error("VULN [NFS Share - Write Access] Found on [%s]" % host)
 
     def process(self):
         # load any targets we are interested in
@@ -33,29 +76,8 @@ class scan_nmap_nfsshares(actionModule):
                 self.addseentarget(t)
                 self.display.verbose(self.shortName + " - Connecting to " + t)
                 # run nmap
-                n = mynmap(self.config, self.display)
+                n = mynmap(self.config, self.display, portScriptFunc=self.myProcessPortScript)
                 scan_results = n.run(target=t, flags="--script=nfs-ls,nfs-showmount", ports="111", vector=self.vector, filetag=t + "_NFSSHARESCAN")
 
-                for volumestable in scan_results.iter("table"):
-                    if volumestable.attrib.has_key('key') and volumestable.attrib['key'] == "volumes":
-                        for volume in volumestable:
-                            sharename = ""
-                            shareinfo = ""
-                            files = {}
-                            for elem in volume:
-                                if elem.attrib["key"] == "volume":
-                                    sharename = elem.text.replace("/", "%2F")
-                                if elem.attrib["key"] == "info":
-                                    shareinfo = elem[0].text.replace("/", "%2F")
-                                if elem.attrib["key"] == "files":
-                                    for file in elem:
-                                        newfile = {}
-                                        for fileprop in file:
-                                            newfile[fileprop.attrib["key"]] = fileprop.text
-                                        files[newfile["filename"]] = newfile
-                            kb.add("host/" + t + "/shares/NFS/" + sharename + "/" + str("Info: " + shareinfo))
-                            for file in files:
-                                # TODO - Maybe revisit adding more file properties here in addition to names
-                                kb.add("host/" + t + "/shares/NFS/" + sharename + "/Files/" + str(file).replace("/", "%2F"))
                                 
         return

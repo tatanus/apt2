@@ -123,6 +123,7 @@ class actionModule(object):
         return kb.get('host/' + host + '/hostname/')
 
     def addVuln(self, host, vuln, details={}):
+        self.display.error("VULN [%s] Found on [%s]" % (vuln,host))
         kb.add("host/" + host + "/vuln/" + vuln + "/module/" + self.shortName)
         kb.add("host/" + host + "/vuln/" + vuln + "/vector/" + self.vector)
         for key in details:

@@ -20,7 +20,20 @@ class scan_nmap_vncbrute(actionModule):
         self.safeLevel = 5
 
     def getTargets(self):
-        self.targets = kb.get(['port/tcp_5800/ip', 'port/tcp_5900/ip'])
+        self.targets = kb.get('port/tcp_5800/ip', 'port/tcp_5900/ip')
+
+    def myProcessPortScript(self, host, proto, port, script, outfile):
+        outfile = outfile + ".xml"
+        scriptid = script.attrib['id']
+        output = script.attrib['output']
+        if scriptid == "vnc-brute":
+            if "No authentication required" in output:
+                self.addVuln(host, "VNCNoAuth", {"port":port,"message":"No authentication required","output": outfile.replace("/", "%2F")})
+                self.fire("VNCNoAuth")
+            for elem in script.iter('elem'):
+                if elem.attrib['key'] == "password":
+                    self.addVuln(host, "VNCBrutePass", {"port":portnum, "password":elem.text})
+                    self.fire("VNCBrutePass")
 
     def process(self):
         # load any targets we are interested in
@@ -34,18 +47,7 @@ class scan_nmap_vncbrute(actionModule):
                 self.addseentarget(t)
                 self.display.verbose(self.shortName + " - Connecting to " + t)
                 # run nmap
-                n = mynmap(self.config, self.display)
+                n = mynmap(self.config, self.display, portScriptFunc=self.myProcessPortScript)
                 scan_results = n.run(target=t, flags="--script=vnc-brute", ports="5800,5900", vector=self.vector, filetag=t + "_VNCBRUTE")
-                for porttag in scan_results.iter('port'):
-                    portnum = porttag.attrib['portid']
-                    for scriptid in porttag.findall('script'):
-                        if scriptid.attrib['id'] == "vnc-brute":
-                            if scriptid.attrib['output'] == "No authentication required":
-                                self.addVuln(t, "VNCNoAuth", {"port":portnum,"message":"No authentication required","output": n.outfile.replace("/", "%2F") + ".xml"})
-                                self.fire("VNCNoAuth")
-                            for elem in scriptid.iter('elem'):
-                                if elem.attrib['key'] == "password":
-                                    self.addVuln(t, "VNCBrutePass", {"port":portnum, "password":elem.text})
-                                    self.fire("VNCBrutePass")
 
         return
