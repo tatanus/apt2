@@ -17,7 +17,7 @@ class scan_nmap_sslscan(actionModule):
         self.safeLevel = 5
 
     def getTargets(self):
-        self.targets = kb.get('port/tcp_443/ip', 'port/tcp_8443/ip', 'service/https', 'service/ssl')
+        self.targets = kb.get('port/tcp/443', 'port/tcp/8443', 'service/https', 'service/ssl')
 
     def process(self):
         # load any targets we are interested in
@@ -27,7 +27,7 @@ class scan_nmap_sslscan(actionModule):
         # loop over each target
         for t in self.targets:
             print("HI")
-            ports = kb.get(['service/https/' + t, 'service/ssl/host/' + t])
+            ports = kb.get('service/https/' + t, 'service/ssl/host/' + t)
             for port in ports:
                 print("1")
                 # verify we have not tested this host before

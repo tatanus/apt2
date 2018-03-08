@@ -12,7 +12,7 @@ class scan_nmap_vncbrute(actionModule):
         super(scan_nmap_vncbrute, self).__init__(config, display, lock)
         self.title = "NMap VNC Brute Scan"
         self.shortName = "NmapVNCBruteScan"
-        self.description = "execute [nmap -p5800,5900 --script=vnc-brute] on each target"
+        self.description = "execute [nmap -p5800,5900 --script vnc-brute] on each target"
 
         self.requirements = ["nmap"]
         self.triggers = ["newPort_tcp_5800", "newPort_tcp_5900"]
@@ -20,7 +20,7 @@ class scan_nmap_vncbrute(actionModule):
         self.safeLevel = 5
 
     def getTargets(self):
-        self.targets = kb.get('port/tcp_5800/ip', 'port/tcp_5900/ip')
+        self.targets = kb.get('port/tcp/5800', 'port/tcp/5900')
 
     def myProcessPortScript(self, host, proto, port, script, outfile):
         outfile = outfile + ".xml"
@@ -48,6 +48,6 @@ class scan_nmap_vncbrute(actionModule):
                 self.display.verbose(self.shortName + " - Connecting to " + t)
                 # run nmap
                 n = mynmap(self.config, self.display, portScriptFunc=self.myProcessPortScript)
-                scan_results = n.run(target=t, flags="--script=vnc-brute", ports="5800,5900", vector=self.vector, filetag=t + "_VNCBRUTE")
+                scan_results = n.run(target=t, flags="--script vnc-brute", ports="5800,5900", vector=self.vector, filetag=t + "_VNCBRUTE")
 
         return

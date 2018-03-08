@@ -12,7 +12,7 @@ class scan_nmap_smbsigning(actionModule):
         super(scan_nmap_smbsigning, self).__init__(config, display, lock)
         self.title = "NMap SMB-Signing Scan"
         self.shortName = "NmapSMBSigning"
-        self.description = "execute [nmap -p445 --script=smb-security-mode] on each target"
+        self.description = "execute [nmap -p445 --script smb-security-mode] on each target"
 
         self.requirements = ["nmap"]
         self.triggers = ["newPort_tcp_445", "newPort_tcp_139"]
@@ -20,7 +20,7 @@ class scan_nmap_smbsigning(actionModule):
         self.safeLevel = 5
 
     def getTargets(self):
-        self.targets = kb.get('port/tcp_139/ip', 'port/tcp_445/ip')
+        self.targets = kb.get('port/tcp/139', 'port/tcp/445')
 
     def myProcessHostScript(self, host, script, outfile):
         outfile = outfile + ".xml"
@@ -48,7 +48,6 @@ class scan_nmap_smbsigning(actionModule):
                                                         "Challenge Response": challenge_response,
                                                         "Message Signing": message_signing})
                 self.fire("SMBSigningDisabled")
-                self.display.error("VULN [SMB Signing Disabled] Found on [%s]" % host)
 
     def process(self):
         # load any targets we are interested in
@@ -62,6 +61,6 @@ class scan_nmap_smbsigning(actionModule):
                 self.addseentarget(t)
                 # run nmap
                 n = mynmap(self.config, self.display, hostScriptFunc=self.myProcessHostScript)
-                scan_results = n.run(target=t, flags="--script=smb-security-mode", ports="445", vector=self.vector, filetag=t + "_SMBSIGNINGSCAN")
+                scan_results = n.run(target=t, flags="--script smb-security-mode", ports="445", vector=self.vector, filetag=t + "_SMBSIGNINGSCAN")
 
         return

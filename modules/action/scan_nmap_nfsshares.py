@@ -11,7 +11,7 @@ class scan_nmap_nfsshares(actionModule):
         super(scan_nmap_nfsshares, self).__init__(config, display, lock)
         self.title = "NMap NFS Share Scan"
         self.shortName = "NmapNFSShareScan"
-        self.description = "execute [nmap -p111 --script=nfs-ls,nfs-showmount] on each target"
+        self.description = "execute [nmap -p111 --script nfs-ls,nfs-showmount] on each target"
 
         self.requirements = ["nmap"]
         self.triggers = ["newPort_udp_111", "newPort_tcp_111"]
@@ -19,7 +19,7 @@ class scan_nmap_nfsshares(actionModule):
         self.safeLevel = 5
 
     def getTargets(self):
-        self.targets = kb.get('port/tcp_111/ip', 'port/udp_111/ip')
+        self.targets = kb.get('port/tcp/111', 'port/udp/111')
 
     def myProcessPortScript(self, host, proto, port, script, outfile):
         outfile = outfile + ".xml"
@@ -49,7 +49,7 @@ class scan_nmap_nfsshares(actionModule):
                                 for fileprop in file:
                                     newfile[fileprop.attrib["key"]] = fileprop.text
                                 files[newfile["filename"]] = newfile
-                    kb.add("share/nfs/" + sharename + "/" + host + "/" + str("Info: " + shareinfo))
+                    kb.add("share/nfs/" + host + "/" + sharename + "/" + str("Info: " + shareinfo))
 #                    for file in files:
 #                        # TODO - Maybe revisit adding more file properties here in addition to names
 #                        kb.add("host/" + host + "/shares/NFS/" + sharename + "/Files/" + str(file).replace("/", "%2F"))
@@ -58,11 +58,9 @@ class scan_nmap_nfsshares(actionModule):
             if readAccess:
                 self.addVuln(host, "nfs-read", {"port": "111", "output": outfile.replace("/", "%2F")})
                 self.fire("nfsRead")
-                self.display.error("VULN [NFS Share - Read Access] Found on [%s]" % host)
             if writeAccess:
                 self.addVuln(host, "nfs-write", {"port": "111", "output": outfile.replace("/", "%2F")})
                 self.fire("nfsWrite")
-                self.display.error("VULN [NFS Share - Write Access] Found on [%s]" % host)
 
     def process(self):
         # load any targets we are interested in
@@ -77,7 +75,7 @@ class scan_nmap_nfsshares(actionModule):
                 self.display.verbose(self.shortName + " - Connecting to " + t)
                 # run nmap
                 n = mynmap(self.config, self.display, portScriptFunc=self.myProcessPortScript)
-                scan_results = n.run(target=t, flags="--script=nfs-ls,nfs-showmount", ports="111", vector=self.vector, filetag=t + "_NFSSHARESCAN")
+                scan_results = n.run(target=t, flags="--script nfs-ls,nfs-showmount", ports="111", vector=self.vector, filetag=t + "_NFSSHARESCAN")
 
                                 
         return

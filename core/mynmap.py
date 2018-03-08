@@ -104,7 +104,7 @@ class mynmap():
         if state == "open":
             portnum = port.attrib['portid']
             proto = port.attrib['protocol']
-            kb.add('port/' + proto + '_' + portnum + '/ip/' + host)
+            kb.add('port/' + proto + '/' + portnum + '/' + host)
             EventHandler.fire("newPort_" + proto + '_' + portnum + ":" + self.vector)
 
             self.processService(host, portnum, proto, port.find('service'))
@@ -129,7 +129,7 @@ class mynmap():
 #                print value
 #            elif key == 'conf':
 #                print value
-        kb.add('service/' + name + '/' + host + '/' + proto + '_' + port + '/version/' + product + ' ' + version)
+        kb.add('service/' + name + '/' + host + '/' + proto + '/' + port + '/version/' + product + ' ' + version)
         EventHandler.fire("newService_" + name + ":" + self.vector)
     
     def processHostScript(self, host, script, outfile):
