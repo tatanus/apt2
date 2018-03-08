@@ -13,7 +13,7 @@ class scan_httpserverversion(actionModule):
         self.description = "issue [GET / HTTP/1.0] to each web server"
 
         self.requirements = []
-        self.triggers = ["newServicehttp", "newServicehttps", "newPort80", "newPort443"]
+        self.triggers = ["newService_http", "newService_https", "newPort_tcp_80", "newPort_tcp_443"]
         self.types = ["http"]
 
         self.safeLevel = 5

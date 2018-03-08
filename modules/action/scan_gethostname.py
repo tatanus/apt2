@@ -33,7 +33,7 @@ class scan_gethostname(actionModule):
                 self.display.verbose(self.shortName + " - Connecting to " + t)
                 try:
                     results = socket.gethostbyaddr(t)
-                    self.fire("newHostName")
+                    self.fire("newHostname")
                     kb.add('host/' + t + '/hostname/' + results[0])
                 except:
                     pass

@@ -11,7 +11,7 @@ class scan_httpscreenshot(actionModule):
         self.description = "load each web server and get a screenshot"
 
         self.requirements = ["phantomjs"]
-        self.triggers = ["newServicehttp", "newServicehttps", "newPort80", "newPort443"]
+        self.triggers = ["newService_http", "newService_https", "newPort_tcp_80", "newPort_tcp_443"]
         self.types = ["http"]
 
         self.safeLevel = 5

@@ -13,7 +13,7 @@ class scan_rpcclient_nullsession(actionModule):
         self.description = "execute [rpcclient -U \"\" -N <IP> -c srvinfo] on each target"
 
         self.requirements = ["rpcclient"]
-        self.triggers = ["newPort445", "newPort139"]
+        self.triggers = ["newPort_tcp_445", "newPort_tcp_139"]
 
         self.safeLevel = 5
 

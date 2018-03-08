@@ -1,4 +1,3 @@
-#import fnmatch
 import re
 
 try:
@@ -18,7 +17,7 @@ class scan_searchsmbshare(actionModule):
         self.description = "connect to remote SMB Share service and search for interesting files"
 
         self.requirements = []
-        self.triggers = ["newServicen_smb", "newPort_tcp_445", "newPort_tcp_139"]
+        self.triggers = ["newService_smb", "newPort_tcp_445", "newPort_tcp_139"]
         self.types = ["filesearch"]
 
         self.safeLevel = 4
@@ -29,6 +28,39 @@ class scan_searchsmbshare(actionModule):
         # we are interested in all hosts
         self.targets = kb.get('port/tcp/445', 'port/tcp/139')
         self.targets2 = kb.get('service/smb')
+
+    def searchDir(self, conn, share, path, depth=0):
+        if depth > 5:
+            return
+
+        try:
+            # list the files on each share (recursivity?)
+            print "----------" + share + "---" + path
+            names = conn.listPath(share, path, timeout=30)
+
+            for name in names:
+                if name.isDirectory:
+                    if name.filename not in [u'.', u'..']:
+                        self.searchDir(conn, share, path + name.filename + '/', depth + 1)
+                else:
+                    for pattern in self.filepatterns:
+                        try:
+                            re.compile(pattern)
+                            result = re.match(pattern, name.filename)
+                            if (result):
+                                outfile = self.config["proofsDir"] + self.shortName + "_" + host + "_" + share + "_" + name.file.name.replace("/", "-") + "_" + Utils.getRandStr(10)
+
+                                # TODO
+                                #conn.retrieveFile(share, path + name.filename, loacl_file)
+                                #Utils.writeFile(result, outfile)
+                                self.display.debug("_____    Share[" + share + "] =" + path + name.filename)
+                        except re.error:
+                            pass
+                            #self.display.debug("Invalid File Pattern --> %s <--" % pattern) 
+        except:
+            self.display.error('### can not access the resource')
+
+        return
 
     def searchTarget(self, host, username, password, domainname):
         success = False
@@ -55,23 +87,24 @@ class scan_searchsmbshare(actionModule):
                     self.display.debug('Shares on: ' + host)
                     for i in range(len(Response)):  # iterate through the list of shares
                         self.display.debug("  Share[" + str(i) + "] =" + str(Response[i].name))
-                        try:
-                            # list the files on each share (recursivity?)
-                            Response2 = conn.listPath(Response[i].name, '/', timeout=30)
-                            self.display.debug('    Files on: ' + host + '/' + "  Share[" + str(i) + "] =" + str(Response[i].name))
-                            for i in range(len(Response2)):
-                                for pattern in self.filepatterns:
-                                    try:
-                                        re.compile(pattern)
-                                        result = re.match(pattern, Response2[i].filename)
-                                        if (result):
-                                            # TODO
-                                            # host.download(fpath, self.config["proofsDir"] + ip + fpath.replace("/", "_"))
-                                            self.display.debug("    File[" + str(i) + "] =" + str(Response2[i].filename))
-                                    except re.error:
-                                        self.display.debug("Invalid File Pattern --> %s <--" % pattern) 
-                        except:
-                            self.display.error('### can not access the resource')
+                        self.searchDir(conn, Response[i].name, '/')
+#                        try:
+#                            # list the files on each share (recursivity?)
+#                            Response2 = conn.listPath(Response[i].name, '/', timeout=30)
+#                            self.display.debug('    Files on: ' + host + '/' + "  Share[" + str(i) + "] =" + str(Response[i].name))
+#                            for i in range(len(Response2)):
+#                                for pattern in self.filepatterns:
+#                                    try:
+#                                        re.compile(pattern)
+#                                        result = re.match(pattern, Response2[i].filename)
+#                                        if (result):
+#                                            # TODO
+#                                            # host.download(fpath, self.config["proofsDir"] + ip + fpath.replace("/", "_"))
+#                                            self.display.debug("    File[" + str(i) + "] =" + str(Response2[i].filename))
+#                                    except re.error:
+#                                        self.display.debug("Invalid File Pattern --> %s <--" % pattern) 
+#                        except:
+#                            self.display.error('### can not access the resource')
                 except:
                     self.display.error('### can not list shares')
         except:

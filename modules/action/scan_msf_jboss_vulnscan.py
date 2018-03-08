@@ -9,7 +9,7 @@ from core.utils import Utils
 class scan_msf_jboss_vulnscan(actionModule):
     def __init__(self, config, display, lock):
         super(scan_msf_jboss_vulnscan, self).__init__(config, display, lock)
-        self.triggers = ["newServicehttp", "newPort80", "newPort8080"]
+        self.triggers = ["newService_http", "newPort_tcp_80", "newPort_tcp_8080"]
         self.requirements = ["msfconsole"]
         self.types = ["http"]
         self.title = "Attempt to determine if a jboss instance has default creds"

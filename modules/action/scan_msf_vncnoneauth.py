@@ -9,7 +9,7 @@ from core.utils import Utils
 class scan_msf_vncnoneauth(actionModule):
     def __init__(self, config, display, lock):
         super(scan_msf_vncnoneauth, self).__init__(config, display, lock)
-        self.triggers = ["newPort5900"]
+        self.triggers = ["newPort_tcp_5900"]
         self.requirements = ["msfconsole"]
         self.title = "Detect VNC Services with the None authentication type"
         self.shortName = "MSFVNCNoneAuth"

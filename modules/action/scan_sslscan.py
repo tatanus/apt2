@@ -14,7 +14,7 @@ class scan_sslscan(actionModule):
         self.description = "execute [sslscan <server>:<port> on each target"
 
         self.requirements = ["sslscan"]
-        self.triggers = ["newServicessl", "newServicehttps", "newPort443", "newPort8443"]
+        self.triggers = ["newService_ssl", "newService_https", "newPort_tcp_443", "newPort_tcp_8443"]
 
         self.safeLevel = 5
 

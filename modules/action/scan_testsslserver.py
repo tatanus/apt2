@@ -12,7 +12,7 @@ class scan_testsslserver(actionModule):
         self.description = "execute [TestSSLServer <server> <port>] on each target"
 
         self.requirements = ["java"]
-        self.triggers = ["newServicehttps", "newServicessl", "newPort443", "newPort8443"]
+        self.triggers = ["newService_https", "newService_ssl", "newPort_tcp_443", "newPort_tcp_8443"]
 
         self.safeLevel = 5
 

@@ -13,7 +13,7 @@ class scan_smbclient_nullsession(actionModule):
         self.description = "execute [smbclient -N -L <IP>] on each target"
 
         self.requirements = ["smbclient"]
-        self.triggers = ["newPort445", "newPort139"]
+        self.triggers = ["newPort_tcp_445", "newPort_tcp_139"]
 
         self.safeLevel = 5
 

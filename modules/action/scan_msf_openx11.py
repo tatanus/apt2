@@ -9,7 +9,7 @@ from core.utils import Utils
 class scan_msf_openx11(actionModule):
     def __init__(self, config, display, lock):
         super(scan_msf_openx11, self).__init__(config, display, lock)
-        self.triggers = ["newPort6000"]
+        self.triggers = ["newPort_tcp_6000"]
         self.requirements = ["msfconsole"]
         self.title = "Attempt Login To Open X11 Service"
         self.shortName = "MSFOpenX11"

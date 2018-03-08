@@ -9,7 +9,7 @@ from core.utils import Utils
 class scan_msf_snmplogin(actionModule):
     def __init__(self, config, display, lock):
         super(scan_msf_snmplogin, self).__init__(config, display, lock)
-        self.triggers = ["newPort161"]
+        self.triggers = ["newPort_tcp_161"]
         self.requirements = ["msfconsole"]
         self.title = "Attempt Login Using Common Community Strings"
         self.shortName = "MSFSNMPLogin"
