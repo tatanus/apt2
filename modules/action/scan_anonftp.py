@@ -67,7 +67,7 @@ class scan_anonftp(actionModule):
         self.getTargets()
 
         # loop over each target
-        for t in self.targets2:
+        for t in self.targets:
             ports = kb.get('service/ftp/' + t + '/tcp')
             for p in ports:
                 self.testTarget(t, p)

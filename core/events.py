@@ -43,7 +43,7 @@ class EventQueue():
 
     @staticmethod
     def push(evtobj):
-        print("NEW EVENT: " + evtobj.get_event())
+#        print("NEW EVENT: " + evtobj.get_event())
         EventQueue.eventQueue.put(evtobj)
         return
 

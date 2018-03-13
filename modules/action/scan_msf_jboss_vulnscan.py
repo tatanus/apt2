@@ -43,7 +43,7 @@ class scan_msf_jboss_vulnscan(actionModule):
                         msf.execute("use auxiliary/scanner/http/jboss_vulnscan\n")
                         msf.execute("set RHOSTS %s\n" % t)
                         msf.execute("set RPORT %s\n" % p)
-                        msf.execute("exploit -j\n")
+                        msf.execute("exploit\n")
                         msf.sleep(int(self.config['msfexploitdelay']))
 
                         outfile = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)

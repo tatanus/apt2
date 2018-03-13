@@ -1,4 +1,5 @@
 import re
+from cStringIO import StringIO
 
 try:
     from smb.SMBConnection import SMBConnection
@@ -7,6 +8,7 @@ except ImportError:
 
 from core.actionModule import actionModule
 from core.keystore import KeyStore as kb
+from core.utils import Utils
 
 
 class scan_searchsmbshare(actionModule):
@@ -29,30 +31,30 @@ class scan_searchsmbshare(actionModule):
         self.targets = kb.get('port/tcp/445', 'port/tcp/139')
         self.targets2 = kb.get('service/smb')
 
-    def searchDir(self, conn, share, path, depth=0):
+    def searchDir(self, host, conn, share, path, depth=0):
         if depth > 5:
             return
 
         try:
             # list the files on each share (recursivity?)
-            print "----------" + share + "---" + path
             names = conn.listPath(share, path, timeout=30)
 
             for name in names:
                 if name.isDirectory:
                     if name.filename not in [u'.', u'..']:
-                        self.searchDir(conn, share, path + name.filename + '/', depth + 1)
+                        self.searchDir(conn, host, share, path + name.filename + '/', depth + 1)
                 else:
                     for pattern in self.filepatterns:
                         try:
                             re.compile(pattern)
                             result = re.match(pattern, name.filename)
                             if (result):
-                                outfile = self.config["proofsDir"] + self.shortName + "_" + host + "_" + share + "_" + name.file.name.replace("/", "-") + "_" + Utils.getRandStr(10)
-
-                                # TODO
-                                #conn.retrieveFile(share, path + name.filename, loacl_file)
-                                #Utils.writeFile(result, outfile)
+                                #download the file
+                                outfile = self.config["proofsDir"] + self.shortName + "_" + host + "_" + share + "_" + name.filename.replace("/", "-") + "_" + Utils.getRandStr(10)
+                                temp_fh = StringIO()
+                                conn.retrieveFile(share, path + name.filename, temp_fh)
+                                temp_fh.seek(0)
+                                Utils.writeFile(temp_fh.getvalue(), outfile)
                                 self.display.debug("_____    Share[" + share + "] =" + path + name.filename)
                         except re.error:
                             pass
@@ -87,7 +89,7 @@ class scan_searchsmbshare(actionModule):
                     self.display.debug('Shares on: ' + host)
                     for i in range(len(Response)):  # iterate through the list of shares
                         self.display.debug("  Share[" + str(i) + "] =" + str(Response[i].name))
-                        self.searchDir(conn, Response[i].name, '/')
+                        self.searchDir(host, conn, Response[i].name, '/')
 #                        try:
 #                            # list the files on each share (recursivity?)
 #                            Response2 = conn.listPath(Response[i].name, '/', timeout=30)

@@ -23,16 +23,12 @@ class scan_nmap_sslscan(actionModule):
         # load any targets we are interested in
         self.getTargets()
 
-        print(self.getTargets())
         # loop over each target
         for t in self.targets:
-            print("HI")
             ports = kb.get('service/https/' + t, 'service/ssl/host/' + t)
             for port in ports:
-                print("1")
                 # verify we have not tested this host before
                 if not self.seentarget(t + str(port)):
-                    print("1")
                     # add the new IP to the already seen list
                     self.addseentarget(t + str(port))
                     # run nmap

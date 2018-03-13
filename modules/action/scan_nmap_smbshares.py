@@ -14,7 +14,7 @@ class scan_nmap_smbshares(actionModule):
         self.shortName = "NmapSMBShareScan"
         self.description = "execute [nmap -p445 --script smb-enum-shares] on each target"
 
-        self.requirements = ["nmap", "disabled"]
+        self.requirements = ["nmap"]
         self.triggers = ["newPort_tcp_445", "newPort_tcp_139"]
 
         self.safeLevel = 5
@@ -22,56 +22,50 @@ class scan_nmap_smbshares(actionModule):
     def getTargets(self):
         self.targets = kb.get('port/tcp/139', 'port/tcp/445')
 
-        for table in scan_results.iter('table'):
-            sharename = table.attrib["key"]
-            for elem in table:
-                if elem.text is not None:
-                    kb.add("share/smb/" + t + "/" + sharename + "/" + str(elem.attrib['key'] + ": " + elem.text).replace("/", "%2F"))
-
     def myProcessHostScript(self, host, script, outfile):
         outfile = outfile + ".xml"
         scriptid = script.attrib['id']
         output = script.attrib['output']
         if (scriptid == "smb-enum-shares"):
-	    for table in script.findall('table'):
-		for elem in table.findall('elem'):
-                    if elem.attrib['key']:
-                        None
-            readAccess = False
-            writeAccess = False
             for volumes in script.findall("table"):
-                for volume in volumes.findall("table"):
+                for volume in volumes:
+                    readAccess = False
+                    writeAccess = False
                     sharename = ""
-                    shareinfo = ""
+                    sharetype = ""
+                    sharecomment = ""
+                    anonaccess = ""
+                    useraccess = ""
+    
                     files = {}
+                    sharename = volume.attrib["key"]
                     for elem in volume:
-                        if elem.attrib["key"] == "volume":
-                            sharename = elem.text.replace("/", "%2F")
-                        if elem.attrib["key"] == "info":
+                        if elem.attrib["key"] == "Type":
+                            sharetype = elem.text.replace("/", "%2F")
+                        if elem.attrib["key"] == "Comment":
+                            sharecomment = elem.text.replace("/", "%2F")
+                        elif elem.attrib["key"] == "Anonymous access":
                             rights = elem[0].text
-                            if "Read" in rights:
+                            if "READ" in rights:
                                 readAccess = True
-                            if "Modify" in rights:
+                            if "WRITE" in rights:
                                 writeAccess = True
-                            shareinfo = rights.replace("/", "%2F")
-                        if elem.attrib["key"] == "files":
-                            for file in elem:
-                                newfile = {}
-                                for fileprop in file:
-                                    newfile[fileprop.attrib["key"]] = fileprop.text
-                                files[newfile["filename"]] = newfile
-                    kb.add("share/nfs/" + sharename + "/" + host + "/" + str("Info: " + shareinfo))
-#                    for file in files:
-#                        # TODO - Maybe revisit adding more file properties here in addition to names
-#                        kb.add("host/" + host + "/shares/NFS/" + sharename + "/Files/" + str(file).replace("/", "%2F"))
-#                        print ("host/" + host + "/shares/NFS/" + sharename + "/Files/" + str(file).replace("/", "%2F"))
-
-            if readAccess:
-                self.addVuln(host, "nfs-read", {"port": "111", "output": outfile.replace("/", "%2F")})
-                self.fire("nfsRead")
-            if writeAccess:
-                self.addVuln(host, "nfs-write", {"port": "111", "output": outfile.replace("/", "%2F")})
-                self.fire("nfsWrite")
+                            anonaccess = rights.replace("/", "%2F")
+                        elif elem.attrib["key"] == "Current user access":
+                            rights = elem[0].text
+                            if "READ" in rights:
+                                readAccess = True
+                            if "WRITE" in rights:
+                                writeAccess = True
+                            useraccess = rights.replace("/", "%2F")
+                    kb.add("share/smb/" + sharename + "/" + host + "/" + str("Info: " + anonaccess))
+    
+                if readAccess:
+                    self.addVuln(host, "smb-read", {"port": "445", "output": outfile.replace("/", "%2F")})
+                    self.fire("nfsRead")
+                if writeAccess:
+                    self.addVuln(host, "smb-write", {"port": "445", "output": outfile.replace("/", "%2F")})
+                    self.fire("nfsWrite")
 
     def process(self):
         # load any targets we are interested in

@@ -43,7 +43,7 @@ class scan_msf_vncnoneauth(actionModule):
                     self.display.verbose(self.shortName + " - Connecting to " + t)
                     msf.execute("use auxiliary/scanner/vnc/vnc_none_auth\n")
                     msf.execute("set RHOSTS %s\n" % t)
-                    msf.execute("exploit -j\n")
+                    msf.execute("exploit\n")
                     msf.sleep(int(self.config['msfexploitdelay']))
                     result = msf.getResult()
                     while (re.search(".*execution completed.*", result) is None):

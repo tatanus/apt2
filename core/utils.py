@@ -307,6 +307,9 @@ class Display():
     def debug(self, line="", end="\n", flush=True, rewrite=False):
         '''Formats and presents output if in debug mode (very verbose).'''
         if self.DEBUG:
+#            import inspect
+#            prev_frame = inspect.currentframe().f_back.f_back.f_back.f_back
+#            self.output("[DEBUG]   " + inspect.getframeinfo(prev_frame).filename + ":" + str(inspect.getframeinfo(prev_frame).lineno), end=end, flush=True, rewrite=rewrite)
             self.output("[DEBUG]   " + line, end=end, flush=True, rewrite=rewrite)
 
     def yn(self, line, default=None):

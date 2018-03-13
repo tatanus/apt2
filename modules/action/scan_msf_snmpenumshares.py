@@ -45,7 +45,7 @@ class scan_msf_snmpenumshares(actionModule):
                         msf.execute("use auxiliary/scanner/snmp/snmp_enumshares\n")
                         msf.execute("set RHOSTS %s\n" % t)
                         msf.execute("set COMMUNITY %s\n" % comString)
-                        msf.execute("exploit -j\n")
+                        msf.execute("exploit\n")
                         msf.sleep(int(self.config['msfexploitdelay']))
                         result = msf.getResult()
                         while (re.search(".*execution completed.*", result) is None):

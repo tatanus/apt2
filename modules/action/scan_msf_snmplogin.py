@@ -44,7 +44,7 @@ class scan_msf_snmplogin(actionModule):
                     msf.execute("use auxiliary/scanner/snmp/snmp_login\n")
                     msf.execute("set RHOSTS %s\n" % t)
                     msf.execute("set VERSION 2c\n")
-                    msf.execute("exploit -j\n")
+                    msf.execute("exploit\n")
                     msf.sleep(int(self.config['msfexploitdelay']))
                     result = msf.getResult()
                     while (re.search(".*execution completed.*", result) is None):
