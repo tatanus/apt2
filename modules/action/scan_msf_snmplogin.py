@@ -40,6 +40,7 @@ class scan_msf_snmplogin(actionModule):
                 if not self.seentarget(t):
                     # add the new IP to the already seen list
                     self.addseentarget(t)
+                    myMsf.lock.acquire()
                     self.display.verbose(self.shortName + " - Connecting to " + t)
                     msf.execute("use auxiliary/scanner/snmp/snmp_login\n")
                     msf.execute("set RHOSTS %s\n" % t)
@@ -49,6 +50,7 @@ class scan_msf_snmplogin(actionModule):
                     result = msf.getResult()
                     while (re.search(".*execution completed.*", result) is None):
                         result = result + msf.getResult()
+                    myMsf.lock.release()
 
                     outfile = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)
                     Utils.writeFile(result, outfile)

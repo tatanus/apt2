@@ -119,6 +119,15 @@ class mynmap():
         for key, value in service.attrib.items():
             if   key == 'name':
                 name = value
+                if "http" in name:
+                    if "https" in name:
+                        name = "https"
+                    elif "ssl" in name:
+                        name = "https"
+                    else:
+                        name = "http"
+                original = value
+#                print "NMAP -- " + original + " -- " + name
             elif key == 'product':
                 product = value
             elif key == 'version':

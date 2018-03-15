@@ -40,16 +40,19 @@ class post_msf_gathersessioninfo(actionModule):
                         if not self.seentarget(s):
                             # add the new IP to the already seen list
                             self.addseentarget(s)
+                            myMsf.lock.acquire()
                             msf.execute("sessions -i " + str(s) + "\n")
                             msf.sleep(int(self.config['msfexploitdelay']))
                             msf.execute("getuid\n")
                             msf.sleep(int(self.config['msfexploitdelay']))
                             msf.execute("background\n")
+                            msf.sleep(int(self.config['msfexploitdelay']))
 
                             outfile = self.config[
                                           "proofsDir"] + self.shortName + "_GetUid_" + t + "_" + Utils.getRandStr(
                                 10)
                             text = msf.getResult()
+                            myMsf.lock.release()
                             Utils.writeFile(text, outfile)
                             kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/", "%2F"))
                             for line in text.splitlines():

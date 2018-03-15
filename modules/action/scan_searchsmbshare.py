@@ -60,7 +60,7 @@ class scan_searchsmbshare(actionModule):
                             pass
                             #self.display.debug("Invalid File Pattern --> %s <--" % pattern) 
         except:
-            self.display.error('### can not access the resource')
+            self.display.debug('### can not access the resource')
 
         return
 
@@ -108,9 +108,9 @@ class scan_searchsmbshare(actionModule):
 #                        except:
 #                            self.display.error('### can not access the resource')
                 except:
-                    self.display.error('### can not list shares')
+                    self.display.debug('### can not list shares')
         except:
-            self.display.error('### can not access the system (%s) (%s) (%s) (%s)' % (host, username, password, domainname))
+            self.display.debug('### can not access the system (%s) (%s) (%s) (%s)' % (host, username, password, domainname))
 
         return success
 

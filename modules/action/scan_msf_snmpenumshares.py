@@ -42,6 +42,7 @@ class scan_msf_snmpenumshares(actionModule):
                     # Get list of working community strings for this host
                     comStrings = kb.get("vuln/host/" + t + "/snmpCred/communityString")
                     for comString in comStrings:
+                        myMsf.lock.acquire()
                         msf.execute("use auxiliary/scanner/snmp/snmp_enumshares\n")
                         msf.execute("set RHOSTS %s\n" % t)
                         msf.execute("set COMMUNITY %s\n" % comString)
@@ -50,6 +51,7 @@ class scan_msf_snmpenumshares(actionModule):
                         result = msf.getResult()
                         while (re.search(".*execution completed.*", result) is None):
                             result = result + msf.getResult()
+                        myMsf.lock.release()
 
                         outfile = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)
                         Utils.writeFile(result, outfile)

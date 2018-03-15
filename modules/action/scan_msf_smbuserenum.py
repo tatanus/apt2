@@ -40,6 +40,7 @@ class scan_msf_smbuserenum(actionModule):
                 if not self.seentarget(t):
                     # add the new IP to the already seen list
                     self.addseentarget(t)
+                    myMsf.lock.acquire()
                     self.display.verbose(self.shortName + " - Connecting to " + t)
                     msf.execute("use auxiliary/scanner/smb/smb_enumusers\n")
                     msf.execute("set RHOSTS %s\n" % t)
@@ -48,6 +49,7 @@ class scan_msf_smbuserenum(actionModule):
                     result = msf.getResult()
                     while (re.search(".*execution completed.*", result) is None):
                         result = result + msf.getResult()
+                    myMsf.lock.release()
 
                     # MSF output format:[*] [timestamp] IP DOMAIN [user,users] ( extras)
                     parts = re.findall(".*" + t.replace(".", "\.") + ".*", result)

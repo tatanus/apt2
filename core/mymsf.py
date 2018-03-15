@@ -2,9 +2,12 @@
 import time
 
 import core.msfrpc2 as msfrpc
+from threading import Lock
 
 
 class myMsf():
+    lock = Lock()
+
     def __init__(self, host="127.0.0.1", port="55552", user="msf", password="msf", uri="/api/", ssl=False,
                  createWorkspace=True):
         self.host = host
@@ -106,12 +109,14 @@ class myMsf():
         if (self.id):
             while True:
                 res = self.conn.call('console.read', [self.id])
-                if len(res['data']) > 1:
-                    result += res['data']
+                if res and 'data' in res:
+                    if len(res['data']) > 1:
+                        result += res['data']
 
-                if res['busy'] == True:
-                    self.sleep(1)
-                    continue
+                if res and 'busy' in res:
+                    if res['busy'] == True:
+                        self.sleep(1)
+                        continue
 
                 break
         return result

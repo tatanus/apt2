@@ -39,6 +39,7 @@ class scan_msf_jboss_vulnscan(actionModule):
                     if not self.seentarget(t+p):
                         # add the new IP to the already seen list
                         self.addseentarget(t+p)
+                        myMsf.lock.acquire()
                         self.display.verbose(self.shortName + " - Connecting to " + t)
                         msf.execute("use auxiliary/scanner/http/jboss_vulnscan\n")
                         msf.execute("set RHOSTS %s\n" % t)
@@ -48,6 +49,7 @@ class scan_msf_jboss_vulnscan(actionModule):
 
                         outfile = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)
                         result = msf.getResult()
+                        myMsf.lock.release()
                         Utils.writeFile(result, outfile)
                         kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/", "%2F"    ))
                         for line in result.splitlines():
