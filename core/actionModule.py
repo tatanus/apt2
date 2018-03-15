@@ -116,14 +116,17 @@ class actionModule(object):
             string += "%s: %s\n" % (key, value)
         return string
 
+    def getDomainUsers(self, domain):
+        return kb.get('creds/domain/' + domain + '/username/')
+
     def getUsers(self, host):
-        return kb.get('host/' + host + '/user/')
+        return kb.get('creds/host/' + host + '/username/')
 
     def getHostnames(self, host):
         return kb.get('host/' + host + '/hostname/')
 
     def addVuln(self, host, vuln, details={}):
-        kb.add("host/" + host + "/vuln/" + vuln + "/module/" + self.shortName)
-        kb.add("host/" + host + "/vuln/" + vuln + "/vector/" + self.vector)
+        self.display.error("VULN [%s] Found on [%s]" % (vuln,host))
+        kb.add("vuln/host/" + host + "/" + vuln + "/module/" + self.shortName + "/" + self.vector)
         for key in details:
-            kb.add("host/" + host + "/vuln/" + vuln + "/" + key + "/" + details[key])
+            kb.add("vuln/host/" + host + "/" + vuln + "/details/" + key + "/" + details[key])

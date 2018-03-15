@@ -307,6 +307,9 @@ class Display():
     def debug(self, line="", end="\n", flush=True, rewrite=False):
         '''Formats and presents output if in debug mode (very verbose).'''
         if self.DEBUG:
+#            import inspect
+#            prev_frame = inspect.currentframe().f_back.f_back.f_back.f_back
+#            self.output("[DEBUG]   " + inspect.getframeinfo(prev_frame).filename + ":" + str(inspect.getframeinfo(prev_frame).lineno), end=end, flush=True, rewrite=rewrite)
             self.output("[DEBUG]   " + line, end=end, flush=True, rewrite=rewrite)
 
     def yn(self, line, default=None):
@@ -371,17 +374,32 @@ class Display():
 
     def printModuleList(self, modules):
         """Print a listing of availialble modules"""
-        self.output("+---------------------------+--------+--------------+-------------------------------------------------------------------------------------------+")
-        self.output("| Module\t\t\t| Type   | Safety Level | Description\t\t\t\t\t\t\t\t\t\t    |")
-        self.output("+---------------------------+--------+--------------+-------------------------------------------------------------------------------------------+")
+
+        module_len = 6
+        type_len = 4
+        safety_len = 12
+        desc_len = 11
+
         for module in modules:
-            self.output("| %s | %s |      %s\t| %s"
-                        %(modules[module]['name'],
-                          modules[module]['type'],
-                          modules[module]['safelevel'],
-                          modules[module]['description']) +
-                        (" " * (90 - len(modules[module]['description']))) + "|")
-        self.output("+---------------------------+--------+--------------+-------------------------------------------------------------------------------------------+")
+
+            if len(modules[module]['name']) > module_len:
+                module_len = len(modules[module]['name'])
+            if len(modules[module]['type']) > type_len:
+                type_len = len(modules[module]['type'])
+            if modules[module]['safelevel'] and len(str(modules[module]['safelevel'])) > safety_len:
+                safety_len = len(str(modules[module]['safelevel']))
+            if len(modules[module]['description']) > desc_len:
+                desc_len = len(modules[module]['description'])
+
+        self.output("+-" + "".ljust(module_len, "-") + "-+-" + "".ljust(type_len, "-") + "-+-" + "".ljust(safety_len, "-") + "-+-" + "".ljust(desc_len, "-") + "-+")
+        self.output("| " + "Module".ljust(module_len) + " | " + "Type".ljust(type_len) + " | " + "Safety_Level".ljust(safety_len) + " | " + "Description".ljust(desc_len) + " |")
+        self.output("+-" + "".ljust(module_len, "-") + "-+-" + "".ljust(type_len, "-") + "-+-" + "".ljust(safety_len, "-") + "-+-" + "".ljust(desc_len, "-") + "-+")
+
+        sort_modules = sorted(modules, key=lambda x: (modules[x]['type'], modules[x]['name']))
+        for module in sort_modules:
+            self.output("| " + modules[module]['name'].ljust(module_len) + " | " + modules[module]['type'].ljust(type_len) + " | " + str(modules[module]['safelevel']).ljust(safety_len) + " | " + modules[module]['description'].ljust(desc_len) + " |")
+
+        self.output("+-" + "".ljust(module_len, "-") + "-+-" + "".ljust(type_len, "-") + "-+-" + "".ljust(safety_len, "-") + "-+-" + "".ljust(desc_len, "-") + "-+")
 
 # -----------------------------------------------------------------------------
 # main test code

@@ -61,23 +61,14 @@ class KeyStore(object):
 
     # return a list of values for a given key
     @staticmethod
-    def get(item):
+    def get(*items):
         result = list()
 
-        # are we processin just one lookup?
-        if (isinstance(item, basestring)):
-            result = KeyStore._get(item)
-            if (isinstance(result, basestring)):
-                result = ast.literal_eval(result)
-        # or are we processing 2 lookups?
-        elif (isinstance(item, list)):
-            for k in item:
-                r2 = KeyStore.get(k)
-                if r2:
-                    if result:
-                        result = result.extend(r2)
-                    else:
-                        result = r2
+        for item in items:
+            r2 = KeyStore._get(item)
+            if (isinstance(r2, basestring)):
+                r2 = ast.literal_eval(r2)
+            result += r2
         if result:
             return sorted(set(result))
         return []
@@ -142,7 +133,8 @@ if __name__ == "__main__":
     #print KeyStore.dump()
 
     print KeyStore.get("host/*/port/80")
-    print KeyStore.get("host")
+    print KeyStore.get("host/2.2.2./port", "host/1.1.1.1/port")
+    #print KeyStore.get("host")
 #    KeyStore.add("service/http/host/1.1.1.1/tcpport/80/product/apache/version/1.1.1.1.1.1.1")
 #    KeyStore.add("service/http/host/1.1.1.1/tcpport/8080/product/apache/version/1.1.1.3.3.3.3")
 #    KeyStore.add("service/https/host/2.2.2.2/tcpport/443/product/nginx/version/a.b.c.d")

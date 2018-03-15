@@ -211,10 +211,10 @@ class Framework():
                             action="store",
                             default="",
                             help="specify a comma seperatec list of module types to exclude from running")
-        parser.add_argument("-b", "--bypassmenu",
-                            dest="bypass_menu",
-                            action='store_true',
-                            help="bypass menu and run from command line arguments")
+#        parser.add_argument("-b", "--bypassmenu",
+#                            dest="bypass_menu",
+#                            action='store_true',
+#                            help="bypass menu and run from command line arguments")
         # ==================================================
         # Misc Flags
         # ==================================================
@@ -235,7 +235,7 @@ class Framework():
         self.config["safe_level"] = int(args.safe_level)
         self.config["exclude_types"] = args.exclude_types
         self.config['lhost'] = args.lhost
-        self.config["bypass_menu"] = args.bypass_menu
+#       self.config["bypass_menu"] = args.bypass_menu
         for f in args.inputs:
             if (Utils.isReadable(f)):
                 type = self.idFileType(f)
@@ -314,6 +314,7 @@ class Framework():
                     module = self.loadModule("action", dirpath, filename)
                     if module is not None:
                         module_dict[module['name'].rstrip(" ")] = module
+
         # process reports
         path = os.path.join(self.config["pkgDir"], 'modules/report')
         for dirpath, dirnames, filenames in os.walk(path):
@@ -661,8 +662,9 @@ class Framework():
             self.display.alert(
                 "If you wish to make use of Metasploit modules within APT2, please update the config file with the "
                 "appropiate settings.")
-            self.display.error("Connect by launching msfconsole and then issue the following command:")
+            self.display.error("Connect by launching msfconsole and then issue the following commands:")
             self.display.error("     load msgrpc User=" + self.config['msfuser'] + " Pass=" + self.config['msfpass'] + " ServerPort=" + self.config['msfport'])
+            self.display.error("     resource " + self.config["miscDir"] + "apt2.rc")
             self.display.output()
 
     def modulesLoaded(self):
@@ -717,8 +719,10 @@ class Framework():
         # begin menu loop
         self.threadcount_thread = Thread(target=EventHandler.print_thread_count, args=(self.display,))
         self.threadcount_thread.start()
-        while self.isRunning:
-            self.displayMenu()
+        self.runScan()  # Skip first trip through menu and go straight into a scan using whatever arguments were passed
+        self.isRunning = False
+#        while self.isRunning:
+#            self.displayMenu()
 
         if (kb):
             kb.save(self.kbSaveFile)

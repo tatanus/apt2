@@ -1,145 +1,160 @@
 import sys
 try:
-    import nmap
-except:
-    sys.exit("[!] Install the nmap library: pip install python-nmap")
-
+    import xml.etree.cElementTree as ET
+except ImportError:
+    import xml.etree.ElementTree as ET
 from core.events import EventHandler
 from core.keystore import KeyStore as kb
 from core.utils import Utils
 
-
 class mynmap():
-    def __init__(self, config, display):
+    def __init__(self, config, display, hostScriptFunc=None, portScriptFunc=None):
         self.config = config
         self.display = display
         if not config:
             self.config = {}
+
+        self.hostScriptFunc = hostScriptFunc
+        if not hostScriptFunc:
+            self.hostScriptFunc = self.processHostScript
+        self.portScriptFunc =portScriptFunc
+        if not portScriptFunc:
+            self.portScriptFunc = self.processScript
+
         self.outfile = ""
-        self.nm = nmap.PortScanner()
+        self.vector = ""
 
     def run(self, target="127.0.0.1", ports="1-1024", flags="-sS", vector="", filetag=""):
-        # get tmp file
         proofsDir = ""
         if "proofsDir" in self.config.keys():
             proofsDir = self.config["proofsDir"]
-        filetag = filetag.replace("/", "_")
+        filetag = filetag.replace("/", "_").replace(" ", "_")
         self.outfile = proofsDir + "NMAP-" + filetag + "-" + Utils.getRandStr(10)
-
+        
         command = self.config["nmap"] + " " + flags + " -p " + ports + " -oA " + self.outfile + " " + target
         tmp_results = Utils.execWait(command)
         self.display.output("Scan file saved to [%s]" % self.outfile)
 
-        return self.loadXMLFile(self.outfile + ".xml", "nmapFile")
+        return self.loadXMLFile(self.outfile + ".xml")
 
     def loadXMLFile(self, file, vector=""):
-        results = dict()
-        with open(file, "r") as fd:
-            content = fd.read()
-            results = self.nm.analyse_nmap_xml_scan(content)
-            self.processIPs(vector)
-        return results
+        self.vector = vector
+        tree = ET.parse(file)
+        self.processXML(tree)
+        root = tree.getroot()
+        return root
 
     def getOutfile(self):
-        return self.outFile
+        return self.outfile
 
-    def getIPs(self):
-        return []
+    def processXML(self, tree):
+        for host in tree.iter('host'):
+            if host.find('status').attrib['state'] == 'up':
+                hostip = self.processHost(host)
+                if host.find('os'):
+                    self.processOs(hostip, host.find('os'))
+                for hostscript in host.findall('hostscript'):
+                    for script in hostscript.findall('script'):
+                        self.hostScriptFunc (hostip, script, self.outfile)
+                if host.find('ports'):
+                    for port in host.find('ports').findall('port'):
+                        self.processPort(hostip, port)
 
-    def getPorts(self, host):
-        return []
+    def processHost(self, host):
+        ip = ""
+        for addr in host.findall('address'):
+            ip_tmp = addr.attrib['addr']
+            addrType = addr.attrib['addrtype']
+            if addrType == "ipv4":
+                ip = ip_tmp
+                kb.add('host/' + ip)
+                EventHandler.fire("newIP" + ":" + self.vector)
+        if host.find('hostname'):
+            for hostname in host.find('hostnames').findall('hostname'):
+                name = hostname.attrib['name']
+                kb.add('host/' + ip + '/dns/' + name)
+        return ip
+    
+    def processOs(self, host, os):
+        osStr = ""
+        osStrAcc = 0
+        for osmatch in os.findall('osmatch'):
+            osStr_tmp = osmatch.attrib['name'] if osmatch.attrib['name'] else ""
+            osStrAcc_tmp = osmatch.attrib['accuracy'] if osmatch.attrib['accuracy'] else ""
+            if (int(osStrAcc_tmp) > osStrAcc):
+                osStrAcc = int(osStrAcc_tmp)
+                osStr = osStr_tmp
+        osFam = ""
+        osGen = ""
+        osClassAcc = 0
+        for osclass in os.findall('osclass'):
+#            print osclass.attrib['type']
+#            print osclass.attrib['vendor']
+            osFam_tmp = osclass.attrib['osfamily'] if osclass.attrib['osfamily'] else ""
+            osGen_tmp = osclass.attrib['osgen'] if osclass.attrib['osgen'] else ""
+            osClassAcc_tmp = osclass.attrib['accuracy'] if osclass.attrib['accuracy'] else ""
+            if (int(osClassAcc_tmp) > osClassAcc):
+                osClassAcc = int(osClassAcc_tmp)
+                osFam = osFam_tmp
+                osGen = osGen_tmp
+        kb.add('host/' + host + '/os/' + osFam + ' ' + osGen)
+    
+    def processPort(self, host, port):
+        state = port.find('state').attrib['state']
+        if state == "open":
+            portnum = port.attrib['portid']
+            proto = port.attrib['protocol']
+            kb.add('port/' + proto + '/' + portnum + '/' + host)
+            EventHandler.fire("newPort_" + proto + '_' + portnum + ":" + self.vector)
 
-    def getResults(self):
-        return []
-
-    def processIPs(self, vector):
-        for host in self.nm.all_hosts():
-            good = False
-            for proto in self.nm[host].all_protocols():
-                if (good):
-                    break
-                lport = list(self.nm[host][proto].keys())
-                lport.sort()
-                for port in lport:
-                    if (good):
-                        break
-                    if (self.nm[host][proto][port]["state"] == "open"):
-                        good = True
-
-            if (good):
-                kb.add('host/' + host)
-                # fire new event for "newHost"
-                EventHandler.fire("newIP" + ":" + vector)
-
-                # process ports
-                self.processPorts(host, vector)
-
-                # process hostscripts
-                if ("hostscript" in self.nm[host]):
-                    self.processHostScripts(host, vector)
+            self.processService(host, portnum, proto, port.find('service'))
+    
+            for script in port.findall('script'):
+                self.portScriptFunc (host, portnum, proto, script, self.outfile)
+    
+    def processService(self, host, port, proto, service):
+        name = ""
+        product = ""
+        version = ""
+        for key, value in service.attrib.items():
+            if   key == 'name':
+                name = value
+                if "http" in name:
+                    if "https" in name:
+                        name = "https"
+                    elif "ssl" in name:
+                        name = "https"
+                    else:
+                        name = "http"
+                original = value
+#                print "NMAP -- " + original + " -- " + name
+            elif key == 'product':
+                product = value
+            elif key == 'version':
+                version = value
+#            elif key == 'ostype':
+#                print value
+#            elif key == 'method':
+#                print value
+#            elif key == 'conf':
+#                print value
+        kb.add('service/' + name + '/' + host + '/' + proto + '/' + port + '/version/' + product + ' ' + version)
+        EventHandler.fire("newService_" + name + ":" + self.vector)
+    
+    def processHostScript(self, host, script, outfile):
+#        print script.attrib['id']
+#        print script.attrib['output']
+#        for child in script:
+#            print child.tag
+#            print child.text
+#            print child.attrib
         return
-
-    def processPorts(self, host, vector):
-        for proto in self.nm[host].all_protocols():
-            lport = list(self.nm[host][proto].keys())
-            lport.sort()
-            for port in lport:
-                if (self.nm[host][proto][port]["state"] == "open"):
-                    # fire event for "newPortXXX"
-                    kb.add('host/' + host + '/' + proto + 'port/' + str(port))
-                    # print  'host/' + host + '/' + proto + 'port/' + str(port)
-                    EventHandler.fire("newPort" + str(port) + ":" + vector)
-
-                    # process services and info
-                    self.processService(host, port, proto, vector)
+    
+    def processScript(self, host, port, proto, script, outfile):
+#        print script.attrib['id']
+#        print script.attrib['output']
+#        for child in script:
+#            print child.tag
+#            print child.text
+#            print child.attrib
         return
-
-    def processService(self, host, port, proto, vector):
-        product = self.nm[host][proto][port]["product"]
-        version = self.nm[host][proto][port]["version"]
-        name = self.nm[host][proto][port]["name"]
-
-        kb.add('service/' + name + '/host/' + host + '/' + proto + 'port/' + str(
-            port) + '/product' + product + '/version/' + str(version))
-        # print  'service/' + name + '/host/' + host + '/' + proto + 'port/' + str(port) + '/product' + product +
-        # '/version/' + str(version)
-        EventHandler.fire("newService" + str(name) + ":" + vector)
-        if ("script" in self.nm[host][proto][port]):
-            self.processScript(host, port, proto, vector)
-        return
-
-    def addVuln(self, host, vuln, vector, details={}):
-        kb.add("host/" + host + "/vuln/" + vuln + "/module/Nmap")
-        kb.add("host/" + host + "/vuln/" + vuln + "/vector/" + vector)
-        for key in details:
-            kb.add("host/" + host + "/vuln/" + vuln + "/" + key + "/" + details[key])
-
-    def processScript(self, host, port, proto, vector):
-        for script_id in self.nm[host][proto][port]["script"]:
-            script_value = self.nm[host][proto][port]["script"][script_id]
-            # if (script_id == "vnc-brute") and (script_value == "No authentication required"):
-            #     EventHandler.fire(script_id + ":" + vector)
-            #     self.addVuln(host, "VNCNoAuth", vector, {"port" : str(port), "message": script_value})
-            #     self.display.error("VULN [%s] Found on [%s]" % (script_id, host))
-        return
-
-    def fireScriptVulnEvent(self, script_id, host, vector):
-        # fire a new trigger
-        EventHandler.fire(script_id + ":" + vector)
-        kb.add('host/' + host + '/vuln/' + script_id)
-        self.display.error("VULN [%s] Found on [%s]" % (script_id, host))
-
-    def processHostScripts(self, host, vector):
-        for script in self.nm[host]["hostscript"]:
-            script_id = script["id"]
-            output = script["output"]
-            if script_id == "smb-vuln-ms08-067":
-                script_id = "ms08-067"
-                if "State: VULNERABLE" in output:
-                    self.fireScriptVulnEvent(script_id, host, vector)
-            # elif script_id == "smb-security-mode":
-            #     if "message_signing: disabled" in output:
-            #         self.fireScriptVulnEvent(script_id, host, vector)
-
-    def out(self):
-        return self.nm.get_nmap_last_output()
