@@ -1,9 +1,5 @@
-# Badges
-
 [![Github Release Version](https://img.shields.io/github/release/moosedojo/apt2.svg)](https://github.com/MooseDojo/apt2/releases)
-
 [![Python 2.6-2.7](https://img.shields.io/badge/Python-2.6--2.7-yellow.svg)](http://www.python.org/download/)
-
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/MooseDojo/apt2/master/LICENSE.txt)
 
 [![Black Hat USA Arsenal](https://github.com/toolswatch/badges/blob/master/arsenal/2016.svg)](https://www.toolswatch.org/2016/06/the-black-hat-arsenal-usa-2016-remarkable-line-up/) - USA
