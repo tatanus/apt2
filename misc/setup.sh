@@ -10,8 +10,7 @@ apt-get install git python-pip
 # cd apt2
 # python setup.py install
 # ./apt2.py -h
-# ./apt2.py -b
 
-echo "At this point, run './apt2.py -b' and look for any line such as:"
+echo "At this point, run 'python apt2.py' and look for any line such as:"
 echo "[!] Module ‘xxxxxxxx’ disabled. Dependency required: '['xxxxxxx']'"
 echo "and make sure you install and missing tools as needed"
