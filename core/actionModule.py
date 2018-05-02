@@ -11,7 +11,7 @@ class actionModule(object):
     def __init__(self, config, display, lock):
         self.display = display
         self.config = config
-        self.safelevel = 1
+        self.safeLevel = 1
         self.targets = []
         self.title = ""
         self.shortName = ""
