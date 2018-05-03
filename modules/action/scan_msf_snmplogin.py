@@ -1,12 +1,11 @@
 import re
 
-from core.actionModule import actionModule
+from core.msfActionModule import msfActionModule
 from core.keystore import KeyStore as kb
-from core.mymsf import myMsf
 from core.utils import Utils
 
 
-class scan_msf_snmplogin(actionModule):
+class scan_msf_snmplogin(msfActionModule):
     def __init__(self, config, display, lock):
         super(scan_msf_snmplogin, self).__init__(config, display, lock)
         self.triggers = ["newPort_tcp_161"]
@@ -25,13 +24,6 @@ class scan_msf_snmplogin(actionModule):
         self.getTargets()
 
         if len(self.targets) > 0:
-            # connect to msfrpc
-            msf = myMsf(host=self.config['msfhost'], port=int(self.config['msfport']), user=self.config['msfuser'],
-                        password=self.config['msfpass'])
-
-            if not msf.isAuthenticated():
-                return
-
             # If any results are succesful, this will become true and Fire will be called in the end
             callFire = False
             # loop over each target
@@ -40,20 +32,16 @@ class scan_msf_snmplogin(actionModule):
                 if not self.seentarget(t):
                     # add the new IP to the already seen list
                     self.addseentarget(t)
-                    myMsf.lock.acquire()
-                    self.display.verbose(self.shortName + " - Connecting to " + t)
-                    msf.execute("use auxiliary/scanner/snmp/snmp_login\n")
-                    msf.execute("set RHOSTS %s\n" % t)
-                    msf.execute("set VERSION 2c\n")
-                    msf.execute("exploit\n")
-                    msf.sleep(int(self.config['msfexploitdelay']))
-                    result = msf.getResult()
-                    while (re.search(".*execution completed.*", result) is None):
-                        result = result + msf.getResult()
-                    myMsf.lock.release()
 
-                    outfile = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)
-                    Utils.writeFile(result, outfile)
+                    cmd = {
+                            'config':[
+                                    "use auxiliary/scanner/snmp/snmp_login",
+                                    "set RHOSTS %s" % t,
+                                    "set VERSION 2c"
+                                ],
+                            'payload':'none'}
+                    result, outfile = self.msfExec(t, cmds)
+
 
                     parts = re.findall(".*LOGIN SUCCESSFUL.*", result)
                     for part in parts:
@@ -66,8 +54,5 @@ class scan_msf_snmplogin(actionModule):
 
             if callFire:
                 self.fire("snmpCred")
-
-            # clean up after ourselves
-            result = msf.cleanup()
 
         return
