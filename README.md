@@ -2,13 +2,13 @@
 [![Python 2.6-2.7](https://img.shields.io/badge/Python-2.6--2.7-yellow.svg)](http://www.python.org/download/)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/MooseDojo/apt2/master/LICENSE.txt)
 
-[![Black Hat USA Arsenal](https://github.com/toolswatch/badges/blob/master/arsenal/2016.svg)](https://www.toolswatch.org/2016/06/the-black-hat-arsenal-usa-2016-remarkable-line-up/) - USA
+[![Black Hat USA Arsenal](https://github.com/toolswatch/badges/blob/master/arsenal/usa/2016.svg)](https://www.toolswatch.org/2016/06/the-black-hat-arsenal-usa-2016-remarkable-line-up/) - USA
 
 [![DEFCON 24 Demolabs](https://img.shields.io/badge/DEFCON%2024-Demo%20Labs-red.svg)](https://www.defcon.org/html/defcon-24/dc-24-demolabs.html)
 
-[![Black Hat EU Arsenal](https://github.com/toolswatch/badges/blob/master/arsenal/2016.svg)](https://www.toolswatch.org/2016/09/the-black-hat-arsenal-europe-2016-line-up/) - EU
+[![Black Hat EU Arsenal](https://github.com/toolswatch/badges/blob/master/arsenal/europe/2016.svg)](https://www.toolswatch.org/2016/09/the-black-hat-arsenal-europe-2016-line-up/) - EU
 
-[![Black Hat ASIA Arsenal](https://github.com/toolswatch/badges/blob/master/arsenal/2018.svg)](https://www.toolswatch.org/2018/01/black-hat-arsenal-asia-2018-great-lineup/) - ASIA
+[![Black Hat ASIA Arsenal](https://github.com/toolswatch/badges/blob/master/arsenal/asia/2018.svg)](https://www.toolswatch.org/2018/01/black-hat-arsenal-asia-2018-great-lineup/) - ASIA
 
 # APT2 - An Automated Penetration Testing Toolkit
 
