@@ -1,12 +1,11 @@
 import re
 
-from core.actionModule import actionModule
+from core.msfActionModule import msfActionModule
 from core.keystore import KeyStore as kb
-from core.mymsf import myMsf
 from core.utils import Utils
 
 
-class scan_msf_jboss_vulnscan(actionModule):
+class scan_msf_jboss_vulnscan(msfActionModule):
     def __init__(self, config, display, lock):
         super(scan_msf_jboss_vulnscan, self).__init__(config, display, lock)
         self.triggers = ["newService_http", "newPort_tcp_80", "newPort_tcp_8080"]
@@ -25,12 +24,6 @@ class scan_msf_jboss_vulnscan(actionModule):
         self.getTargets()
 
         if len(self.targets) > 0:
-            # connect to msfrpc
-            msf = myMsf(host=self.config['msfhost'], port=int(self.config['msfport']), user=self.config['msfuser'], password=self.config['msfpass'])
-
-            if not msf.isAuthenticated():
-                return
-
             # loop over each target
             for t in self.targets:
                 ports = kb.get('service/http/' + t + '/tcp')
@@ -39,19 +32,16 @@ class scan_msf_jboss_vulnscan(actionModule):
                     if not self.seentarget(t+p):
                         # add the new IP to the already seen list
                         self.addseentarget(t+p)
-                        myMsf.lock.acquire()
-                        self.display.verbose(self.shortName + " - Connecting to " + t)
-                        msf.execute("use auxiliary/scanner/http/jboss_vulnscan\n")
-                        msf.execute("set RHOSTS %s\n" % t)
-                        msf.execute("set RPORT %s\n" % p)
-                        msf.execute("exploit\n")
-                        msf.sleep(int(self.config['msfexploitdelay']))
 
-                        outfile = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)
-                        result = msf.getResult()
-                        myMsf.lock.release()
-                        Utils.writeFile(result, outfile)
-                        kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/", "%2F"    ))
+                        cmd = {
+                                'config':[
+                                        "use auxiliary/scanner/http/jboss_vulnscan",
+                                        "set RHOSTS %s" % t,
+                                        "set RPORT %s" % p
+                                    ],
+                                'payload':'none'}
+                        result, outfile = self.msfExec(t, cmds)
+                        
                         for line in result.splitlines():
                             m = re.match(r'.*Authenticated using (.*):(.*)', line)
                             if (m):
@@ -60,8 +50,5 @@ class scan_msf_jboss_vulnscan(actionModule):
                                 kb.add("creds/service/jboss/" + t + "/port/" + p + "/username/"
                                         + m.group(1).strip() + "/password/" + m.group(2).strip())
                                 self.fire("newJbossPassword")
-
-            # clean up after ourselves
-            result = msf.cleanup()
 
         return

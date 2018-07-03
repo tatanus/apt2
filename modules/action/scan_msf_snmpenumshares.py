@@ -1,12 +1,11 @@
 import re
 
-from core.actionModule import actionModule
+from core.msfActionModule import msfActionModule
 from core.keystore import KeyStore as kb
-from core.mymsf import myMsf
 from core.utils import Utils
 
 
-class scan_msf_snmpenumshares(actionModule):
+class scan_msf_snmpenumshares(msfActionModule):
     def __init__(self, config, display, lock):
         super(scan_msf_snmpenumshares, self).__init__(config, display, lock)
         self.triggers = ["snmpCred"]
@@ -25,37 +24,24 @@ class scan_msf_snmpenumshares(actionModule):
         self.getTargets()
 
         if len(self.targets) > 0:
-            # connect to msfrpc
-            msf = myMsf(host=self.config['msfhost'], port=int(self.config['msfport']), user=self.config['msfuser'],
-                        password=self.config['msfpass'])
-
-            if not msf.isAuthenticated():
-                return
-
             # loop over each target
             for t in self.targets:
                 # verify we have not tested this host before
                 if not self.seentarget(t):
                     # add the new IP to the already seen list
                     self.addseentarget(t)
-                    self.display.verbose(self.shortName + " - Connecting to " + t)
-                    # Get list of working community strings for this host
+
+
                     comStrings = kb.get("vuln/host/" + t + "/snmpCred/communityString")
                     for comString in comStrings:
-                        myMsf.lock.acquire()
-                        msf.execute("use auxiliary/scanner/snmp/snmp_enumshares\n")
-                        msf.execute("set RHOSTS %s\n" % t)
-                        msf.execute("set COMMUNITY %s\n" % comString)
-                        msf.execute("exploit\n")
-                        msf.sleep(int(self.config['msfexploitdelay']))
-                        result = msf.getResult()
-                        while (re.search(".*execution completed.*", result) is None):
-                            result = result + msf.getResult()
-                        myMsf.lock.release()
-
-                        outfile = self.config["proofsDir"] + self.shortName + "_" + t + "_" + Utils.getRandStr(10)
-                        Utils.writeFile(result, outfile)
-                        kb.add("host/" + t + "/files/" + self.shortName + "/" + outfile.replace("/", "%2F"))
+                        cmd = {
+                                'config':[
+                                        "use auxiliary/scanner/snmp/snmp_enumshares",
+                                        "set RHOSTS %s" % t,
+                                        "set COMMUNITY %s" % comString
+                                    ],
+                                'payload':'none'}
+                        result, outfile = self.msfExec(t, cmds)
 
                         #  Don't need to parse out IP, we are running module one IP at a time
                         # Just find lines with  -  and pull out share name
@@ -63,8 +49,5 @@ class scan_msf_snmpenumshares(actionModule):
                         for part in parts:
                             sharename = (part.split('-')[0]).strip()
                             kb.add("share/smb/" + t + "/" + sharename)
-
-            # clean up after ourselves
-            result = msf.cleanup()
 
         return
