@@ -1,5 +1,4 @@
 import ast
-import sys
 try:
     from unqlite import UnQLite
 except:
