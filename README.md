@@ -40,7 +40,7 @@ convert, dirb, hydra, java, jexboss, john, ldapsearch, msfconsole, nmap, nmblook
 APT2 uses the *default.cfg* file in the misc directory. Edit this file to configure APT2 to run as you desire.
 
 ##### Metasploit RPC API (metasploit)
-APT2 can utuilize your host's Metasploit RPC interface (MSGRPC). Additional Information can be found here: https://metasploit.help.rapid7.com/v1.1/docs/rpc-api
+APT2 can utilize your host's Metasploit RPC interface (MSGRPC). Additional Information can be found here: https://metasploit.help.rapid7.com/v1.1/docs/rpc-api
 
 ##### NMAP
 Configure NMAP scan settings to include the target, scan type, scan port range, and scan flags. These settings can be configured while the program is running.
